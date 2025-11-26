@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Jeu</title>
+        <style>
+			body {
+				margin: 0;
+				background-color: #3d2505;
+			}
+			canvas {
+				display: block;
+				margin: 75px auto;
+			}
+		</style>
+        <script src="phaser.min.js"></script>
+		<script src="https://poki.com/sdk/poki.js"></script>
+    </head>
+    <body>
+        <script>
+		/* =========================================================
+                    FONCTIONS COMMUNES
+========================================================= */
+let pokiReady = false;
+
+window.PokiSDK && PokiSDK.init && PokiSDK.init().then(() => {
+    pokiReady = true;
+});
+function showInterstitial() {
+    if (pokiReady && PokiSDK.ads.isAdReady()) {
+        PokiSDK.ads.showAd();
+    }
+}
+
+
+function createPlatform(scene, x, y, widthInPx, heightInPx = 40, color = 0xA0522D) {
+    const tileSize = 40;
+    const blocksPerRow = Math.floor(widthInPx / tileSize);
+    const blocksPerCol = Math.floor(heightInPx / tileSize);
+
+    for (let row = 0; row < blocksPerCol; row++) {
+        for (let col = 0; col < blocksPerRow; col++) {
+            const gfx = scene.add.graphics();
+            gfx.fillStyle(color, 1);
+            gfx.fillRect(0, 0, tileSize, tileSize);
+
+            const key = `block-${x + col * tileSize}-${y + row * tileSize}`;
+            gfx.generateTexture(key, tileSize, tileSize);
+            gfx.destroy();
+
+            const block = scene.platforms.create(x + col * tileSize, y + row * tileSize, key);
+            block.setOrigin(0, 0);
+            block.refreshBody();
+        }
+    }
+}
+
+function createBlueCircle(scene, x, y) {
+    const radius = 20;
+    const gfx = scene.add.graphics();
+    gfx.fillStyle(0x0000FF, 1);
+    gfx.fillCircle(radius, radius, radius);
+
+    const key = `blueCircle-${x}-${y}`;
+    gfx.generateTexture(key, radius * 2, radius * 2);
+    gfx.destroy();
+
+    const circle = scene.physics.add.sprite(x, y, key);
+    circle.setCircle(radius);
+    circle.setOrigin(0.5);
+    circle.body.allowGravity = false;
+
+    scene.tweens.add({
+        targets: circle,
+        y: circle.y - 5,
+        duration: 800,
+        yoyo: true,
+        repeat: -1,
+        ease: "Sine.easeInOut"
+    });
+
+    return circle;
+}
+
+function createRedTriangle(scene, x, y) {
+    const size = 40;
+    const height = Math.sqrt(3) / 2 * size;
+
+    const gfx = scene.add.graphics();
+    gfx.fillStyle(0xFF0000, 1);
+    gfx.beginPath();
+    gfx.moveTo(size / 2, 0);
+    gfx.lineTo(0, height);
+    gfx.lineTo(size, height);
+    gfx.closePath();
+    gfx.fillPath();
+
+    const key = `triangle-${x}-${y}`;
+    gfx.generateTexture(key, size, height);
+    gfx.destroy();
+
+    const tri = scene.spikes.create(x, y, key);
+    tri.setOrigin(0.5, 1);
+    tri.refreshBody();
+
+    const bw = tri.body.width * 0.7;
+    const bh = tri.body.height * 0.7;
+    tri.body.setSize(bw, bh);
+    tri.body.setOffset((tri.body.width - bw) / 2, tri.body.height - bh);
+
+    return tri;
+}
+
+/* =========================================================
+                        MENU SCENE
+========================================================= */
+
+class MenuScene extends Phaser.Scene {
+    constructor() {
+        super("MenuScene");
+    }
+
+    create() {
+
+        const title = this.add.text(400, 120, "Menu du Jeu", {
+            fontSize: "50px",
+            color: "#ffffff"
+        }).setOrigin(0.5);
+
+        // Création des boutons pour chaque niveau
+        const niveaux = [
+            { nom: "➡ Niveau 1", scene: "Level1" },
+            { nom: "➡ Niveau 2", scene: "Level2" },
+            { nom: "➡ Niveau 3", scene: "Level3" },
+            { nom: "➡ Niveau 4", scene: "Level4" },
+            { nom: "➡ Niveau 5", scene: "Level5" }
+        ];
+
+        let yPos = 260;
+        niveaux.forEach(niv => {
+            const btn = this.add.text(400, yPos, niv.nom, {
+                fontSize: "34px",
+                color: "#00ff00"
+            }).setOrigin(0.5).setInteractive();
+
+            btn.on("pointerdown", () => this.scene.start(niv.scene));
+
+            yPos += 60; // écart vertical entre boutons
+        });
+    }
+}
+
+
+/* =========================================================
+                        LEVEL 1
+========================================================= */
+
+class Level1 extends Phaser.Scene {
+    constructor() {
+        super("Level1");
+    }
+
+    create() {
+        this.platforms = this.physics.add.staticGroup();
+        this.spikes = this.physics.add.staticGroup();
+		
+				//bouton
+		const backButton = this.add.text(5, 5, "←", {
+            fontSize: "24px",
+            color: "#ffffff",
+            backgroundColor: "#00BFFF",
+            padding: { x: 7, y: 4 },
+            borderRadius: 5
+        }).setInteractive();
+
+        backButton.on("pointerdown", () => {
+            this.scene.start("MenuScene");
+        });
+		
+        // plateformes
+        createPlatform(this, 0, 560, 800);
+        createPlatform(this, 400, 400, 120);
+        createPlatform(this, 600, 300, 80);
+        createPlatform(this, 200, 250, 160);
+        createPlatform(this, 0, 150, 120);
+
+        // joueur
+        const size = 40;
+        const g = this.add.graphics();
+        g.fillStyle(0xAA66CC, 1);
+        g.fillRect(0, 0, size, size);
+        g.generateTexture("player", size, size);
+        g.destroy();
+
+        this.player = this.physics.add.sprite(100, 450, "player");
+        this.player.setBounce(0.2).setCollideWorldBounds(true);
+
+        // objets
+        this.blueCircle = createBlueCircle(this, 40, 120);
+
+        createRedTriangle(this, 380, 560);
+        createRedTriangle(this, 420, 560);
+        createRedTriangle(this, 280, 250);
+
+        // collisions
+        this.physics.add.collider(this.player, this.platforms);
+        this.physics.add.collider(this.player, this.spikes, () => this.scene.restart());
+
+        // sortie vers niveau 2
+        this.physics.add.overlap(this.player, this.blueCircle, () => {
+			showInterstitial();
+            this.scene.start("MenuScene");
+        });
+
+        this.cursors = this.input.keyboard.createCursorKeys();
+        this.jumpCount = 0;
+    }
+
+update() {
+    const p = this.player;
+
+    // Déplacements horizontaux
+    if (this.cursors.left.isDown) p.setVelocityX(-160);
+    else if (this.cursors.right.isDown) p.setVelocityX(160);
+    else p.setVelocityX(0);
+
+    // Reset du compteur de saut
+    if (p.body.touching.down) this.jumpCount = 0;
+
+    // Saut + double saut rotatif
+    if (Phaser.Input.Keyboard.JustDown(this.cursors.up) && this.jumpCount < 2) {
+        p.setVelocityY(-330);
+
+        // Rotation uniquement au second saut
+        if (this.jumpCount === 1) {
+            let direction = 0;
+
+            // direction selon touches
+            if (this.cursors.left.isDown) direction = -1;
+            else if (this.cursors.right.isDown) direction = 1;
+
+            // sinon direction selon orientation du sprite
+            if (direction === 0)
+                direction = p.scaleX >= 0 ? 1 : -1;
+
+            this.tweens.add({
+                targets: p,
+                angle: p.angle + 180 * direction,
+                duration: 500,
+                ease: "Cubic.easeOut"
+            });
+        }
+
+        this.jumpCount++;
+    }
+}
+
+}
+
+/* =========================================================
+                        LEVEL 2
+========================================================= */
+
+class Level2 extends Phaser.Scene {
+    constructor() {
+        super("Level2");
+    }
+
+    create() {
+        this.platforms = this.physics.add.staticGroup();
+        this.spikes = this.physics.add.staticGroup();
+		
+        createPlatform(this, 0, 560, 800);
+        createPlatform(this, 200, 480, 600, 80);
+        createPlatform(this, 0, 280, 480, 80);
+        createPlatform(this, 0, 360, 80);
+        createPlatform(this, 0, 400, 40);
+        createPlatform(this, 440, 360, 80);
+        createPlatform(this, 480, 400, 80);
+        createPlatform(this, 640, 80, 40, 400);
+        createPlatform(this, 0, 200, 200, 80);
+        createPlatform(this, 80, 80, 480, 40);
+        createPlatform(this, 360, 240, 40);
+        createPlatform(this, 280, 200, 80, 80);
+        createPlatform(this, 200, 240, 80, 40);
+        createPlatform(this, 0, 0, 40);
+        createPlatform(this, 0, 160, 40);
+        createPlatform(this, 680, 440, 40);
+        createPlatform(this, 760, 440, 40);
+		//bouton
+		const backButton = this.add.text(5, 5, "←", {
+            fontSize: "24px",
+            color: "#ffffff",
+            backgroundColor: "#00BFFF",
+            padding: { x: 7, y: 4 },
+            borderRadius: 5
+        }).setInteractive();
+
+        backButton.on("pointerdown", () => {
+            this.scene.start("MenuScene");
+        });
+        // joueur
+        const size = 40;
+        const g = this.add.graphics();
+        g.fillStyle(0xAA66CC, 1);
+        g.fillRect(0, 0, size, size);
+        g.generateTexture("player", size, size);
+        g.destroy();
+
+        this.player = this.physics.add.sprite(100, 450, "player");
+        this.player.setBounce(0.2).setCollideWorldBounds(true);
+
+        // piques
+        createRedTriangle(this, 180, 560);
+        createRedTriangle(this, 140, 560);
+        createRedTriangle(this, 300, 480);
+        createRedTriangle(this, 340, 480);
+        createRedTriangle(this, 20, 560);
+        createRedTriangle(this, 500, 360);
+        createRedTriangle(this, 420, 280);
+        createRedTriangle(this, 380, 240);
+        createRedTriangle(this, 260, 240);
+        createRedTriangle(this, 220, 240);
+        createRedTriangle(this, 780, 440);
+        createRedTriangle(this, 700, 440);
+
+        // sortie → retour menu
+        this.blueCircle = createBlueCircle(this, 740, 420);
+
+        this.physics.add.collider(this.player, this.platforms);
+        this.physics.add.collider(this.player, this.spikes, () => this.scene.restart());
+        this.physics.add.overlap(this.player, this.blueCircle, () => {
+			showInterstitial()
+            this.scene.start("MenuScene");
+        });
+
+        this.cursors = this.input.keyboard.createCursorKeys();
+        this.jumpCount = 0;
+    }
+
+update() {
+    const p = this.player;
+
+    // Déplacements horizontaux
+    if (this.cursors.left.isDown) p.setVelocityX(-160);
+    else if (this.cursors.right.isDown) p.setVelocityX(160);
+    else p.setVelocityX(0);
+
+    // Reset du compteur de saut
+    if (p.body.touching.down) this.jumpCount = 0;
+
+    // Saut + double saut rotatif
+    if (Phaser.Input.Keyboard.JustDown(this.cursors.up) && this.jumpCount < 2) {
+        p.setVelocityY(-330);
+
+        // Rotation uniquement au second saut
+        if (this.jumpCount === 1) {
+            let direction = 0;
+
+            // direction selon touches
+            if (this.cursors.left.isDown) direction = -1;
+            else if (this.cursors.right.isDown) direction = 1;
+
+            // sinon direction selon orientation du sprite
+            if (direction === 0)
+                direction = p.scaleX >= 0 ? 1 : -1;
+
+            this.tweens.add({
+                targets: p,
+                angle: p.angle + 180 * direction,
+                duration: 500,
+                ease: "Cubic.easeOut"
+            });
+        }
+
+        this.jumpCount++;
+    }
+}
+
+}
+window.onerror = function (message, source, lineno, colno, error) {
+  alert("Erreur JS : " + message + "\n" + source + ":" + lineno);
+};
+
+/* =========================================================
+                    FONCTIONS COMMUNES
+========================================================= */
+function createPlatform(scene, x, y, widthInPx, heightInPx = 40, color = 0xA0522D) {
+  const tileSize = 40;
+  const blocksPerRow = Math.floor(widthInPx / tileSize);
+  const blocksPerCol = Math.floor(heightInPx / tileSize);
+
+  for (let row = 0; row < blocksPerCol; row++) {
+    for (let col = 0; col < blocksPerRow; col++) {
+      const gfx = scene.add.graphics();
+      gfx.fillStyle(color, 1);
+      gfx.fillRect(0, 0, tileSize, tileSize);
+
+      const key = `block-${x + col * tileSize}-${y + row * tileSize}`;
+      gfx.generateTexture(key, tileSize, tileSize);
+      gfx.destroy();
+
+      const block = scene.platforms.create(x + col * tileSize, y + row * tileSize, key);
+      block.setOrigin(0, 0);
+      block.refreshBody();
+      block.body.setSize(tileSize, tileSize);
+      block.body.setOffset(0, 0);
+    }
+  }
+}
+
+function createRedCircle(scene, x, y, riseAmount = 100, direction = 'up') {
+  const radius = 10;
+
+  const gfx = scene.add.graphics();
+  gfx.fillStyle(0xFF0000, 1);
+  gfx.fillCircle(radius, radius, radius);
+  const key = `redCircle-${x}-${y}`;
+  gfx.generateTexture(key, radius * 2, radius * 2);
+  gfx.destroy();
+
+  const circle = scene.physics.add.sprite(x, y, key);
+  circle.setCircle(radius);
+  circle.setOrigin(0.5);
+  circle.body.moves = false;
+  circle.body.allowGravity = false;
+  circle.body.immovable = true;
+
+  const targetY = direction === 'up' ? y - riseAmount : y + riseAmount;
+
+  scene.tweens.add({
+    targets: circle,
+    y: targetY,
+    duration: 2000,
+    yoyo: true,
+    repeat: -1,
+    ease: 'Sine.easeInOut'
+  });
+
+  return circle;
+}
+
+function createBlueCircle(scene, x, y) {
+  const radius = 20;
+  const gfx = scene.add.graphics();
+  gfx.fillStyle(0x0000FF, 1);
+  gfx.fillCircle(radius, radius, radius);
+
+  const key = `blueCircle-${x}-${y}`;
+  gfx.generateTexture(key, radius * 2, radius * 2);
+  gfx.destroy();
+
+  const circle = scene.physics.add.sprite(x, y, key);
+  circle.setCircle(radius);
+  circle.setOrigin(0.5);
+  circle.body.allowGravity = false;
+  circle.body.immovable = true;
+
+  scene.tweens.add({
+    targets: circle,
+    y: circle.y - 5,
+    duration: 800,
+    yoyo: true,
+    repeat: -1,
+    ease: 'Sine.easeInOut'
+  });
+
+  return circle;
+}
+
+function createRedTriangle(scene, x, y, orientation = 'up') {
+  const size = 40;
+  const height = Math.sqrt(3) / 2 * size;
+  const key = `triangle-${x}-${y}-${orientation}`;
+
+  const gfx = scene.add.graphics();
+  gfx.fillStyle(0xFF0000, 1);
+  gfx.beginPath();
+
+  if (orientation === 'up') {
+    gfx.moveTo(size / 2, 0);
+    gfx.lineTo(0, height);
+    gfx.lineTo(size, height);
+  } else if (orientation === 'down') {
+    gfx.moveTo(size / 2, height);
+    gfx.lineTo(0, 0);
+    gfx.lineTo(size, 0);
+  } else if (orientation === 'left') {
+    gfx.moveTo(0, size / 2);
+    gfx.lineTo(height, 0);
+    gfx.lineTo(height, size);
+  } else if (orientation === 'right') {
+    gfx.moveTo(height, size / 2);
+    gfx.lineTo(0, 0);
+    gfx.lineTo(0, size);
+  }
+
+  gfx.closePath();
+  gfx.fillPath();
+
+  if (orientation === 'left' || orientation === 'right') {
+    gfx.generateTexture(key, height, size);
+  } else {
+    gfx.generateTexture(key, size, height);
+  }
+  gfx.destroy();
+
+  const triangle = scene.spikes.create(x, y, key);
+  switch (orientation) {
+    case 'up': triangle.setOrigin(0.5, 1); break;
+    case 'down': triangle.setOrigin(0.5, 0); break;
+    case 'left': triangle.setOrigin(1, 0.5); break;
+    case 'right': triangle.setOrigin(0, 0.5); break;
+  }
+
+  triangle.refreshBody();
+  const body = triangle.body;
+  const bodyWidth = body.width * 0.7;
+  const bodyHeight = body.height * 0.7;
+  body.setSize(bodyWidth, bodyHeight);
+  body.setOffset((body.width - bodyWidth)/2, (body.height - bodyHeight)/2);
+
+  return triangle;
+}
+
+function onPlayerHitSpike(player, spike, scene) {
+  scene.scene.restart();
+}
+
+/* =========================================================
+                        LEVEL 3
+========================================================= */
+class Level3 extends Phaser.Scene {
+  constructor() { super("Level3"); }
+
+  create() {
+    this.platforms = this.physics.add.staticGroup();
+    this.spikes = this.physics.add.staticGroup();
+    this.redCircles = this.physics.add.group();
+
+    // Plateformes Level 3
+    createPlatform(this, 0, 560, 800);
+    createPlatform(this, 0, 360, 720, 80);
+    createPlatform(this, 0, 520, 80, 40);
+    createPlatform(this, 0, 440, 40, 40);
+    createPlatform(this, 0, 480, 40, 40);
+    createPlatform(this, 720, 520, 80, 40);
+    createPlatform(this, 760, 400, 40, 120);
+    createPlatform(this, 760, 200, 40, 80);
+    createPlatform(this, 80, 200, 520, 40);
+    createPlatform(this, 680, 200, 80, 40);
+    createPlatform(this, 0, 320, 80, 40);
+    createPlatform(this, 0, 80, 40, 40);
+    createPlatform(this, 0, 0, 80, 80);
+    createPlatform(this, 120, 160, 120, 40);
+    createPlatform(this, 160, 120, 440, 40);
+    createPlatform(this, 680, 120, 120, 80);
+    createPlatform(this, 80, 0, 720, 40);
+    createPlatform(this, 520, 160, 80, 40);
+    createPlatform(this, 240, 160, 280, 40, 0xCC99E6);
+		//bouton
+		const backButton = this.add.text(5, 5, "←", {
+            fontSize: "24px",
+            color: "#ffffff",
+            backgroundColor: "#00BFFF",
+            padding: { x: 7, y: 4 },
+            borderRadius: 5
+        }).setInteractive();
+
+        backButton.on("pointerdown", () => {
+            this.scene.start("MenuScene");
+        });
+    // Joueur
+    const playerSize = 40;
+    const playerGfx = this.add.graphics();
+    playerGfx.fillStyle(0xAA66CC, 1);
+    playerGfx.fillRect(0, 0, playerSize, playerSize);
+    playerGfx.generateTexture('playerSquare', playerSize, playerSize);
+    playerGfx.destroy();
+
+    this.player = this.physics.add.sprite(100, 450, 'playerSquare');
+    this.player.setBounce(0.2);
+    this.player.setCollideWorldBounds(true);
+
+    // Piques Level 3
+    createRedTriangle(this, 60, 520);
+    createRedTriangle(this, 420, 560);
+    createRedTriangle(this, 460, 560);
+    createRedTriangle(this, 500, 560);
+    createRedTriangle(this, 60, 440, "down");
+    createRedTriangle(this, 620, 560);
+    createRedTriangle(this, 780, 280, "down");
+    createRedTriangle(this, 740, 240, "down");
+    createRedTriangle(this, 660, 360);
+    createRedTriangle(this, 620, 360);
+    createRedTriangle(this, 100, 360);
+    createRedTriangle(this, 140, 360);
+    createRedTriangle(this, 0, 300, "right");
+    createRedTriangle(this, 0, 260, "right");
+    createRedTriangle(this, 0, 220, "right");
+    createRedTriangle(this, 0, 180, "right");
+    createRedTriangle(this, 0, 140, "right");
+    createRedTriangle(this, 60, 80, "down");
+    createRedTriangle(this, 100, 40, "down");
+    createRedTriangle(this, 140, 40, "down");
+    createRedTriangle(this, 180, 40, "down");
+    createRedTriangle(this, 800, 60, "left");
+    createRedTriangle(this, 800, 100, "left");
+
+    // Boules rouges Level 3
+    this.redCircles.add(createRedCircle(this, 200, 550));
+    this.redCircles.add(createRedCircle(this, 240, 550));
+    this.redCircles.add(createRedCircle(this, 280, 550));
+    this.redCircles.add(createRedCircle(this, 480, 350));
+    this.redCircles.add(createRedCircle(this, 400, 250, 100, 'down'));
+    this.redCircles.add(createRedCircle(this, 320, 350));
+    this.redCircles.add(createRedCircle(this, 480, 110, 60));
+    this.redCircles.add(createRedCircle(this, 400, 50, 60, 'down'));
+    this.redCircles.add(createRedCircle(this, 320, 110, 60));
+
+    // Boule bleue
+    this.blueCircle = createBlueCircle(this, 740, 80);
+
+    // Collisions
+    this.physics.add.collider(this.player, this.platforms);
+    this.physics.add.collider(this.player, this.spikes, (p, s) => onPlayerHitSpike(p, s, this));
+    this.physics.add.overlap(this.player, this.redCircles, () => this.scene.restart());
+    this.physics.add.overlap(this.player, this.blueCircle, () => {
+		showInterstitial()
+        this.scene.start("MenuScene");
+    });
+
+    this.cursors = this.input.keyboard.createCursorKeys();
+    this.jumpCount = 0;
+  }
+
+  update() {
+    const p = this.player;
+
+    // Déplacements horizontaux
+    if (this.cursors.left.isDown) p.setVelocityX(-160);
+    else if (this.cursors.right.isDown) p.setVelocityX(160);
+    else p.setVelocityX(0);
+
+    // Reset du compteur de saut
+    if (p.body.touching.down) this.jumpCount = 0;
+
+    // Saut + double saut rotatif
+    if (Phaser.Input.Keyboard.JustDown(this.cursors.up) && this.jumpCount < 2) {
+        p.setVelocityY(-330);
+
+        // Rotation uniquement au second saut
+        if (this.jumpCount === 1) {
+            let direction = 0;
+
+            // direction selon touches
+            if (this.cursors.left.isDown) direction = -1;
+            else if (this.cursors.right.isDown) direction = 1;
+
+            // sinon direction selon orientation du sprite
+            if (direction === 0)
+                direction = p.scaleX >= 0 ? 1 : -1;
+
+            this.tweens.add({
+                targets: p,
+                angle: p.angle + 180 * direction,
+                duration: 500,
+                ease: "Cubic.easeOut"
+            });
+        }
+
+        this.jumpCount++;
+    }
+}
+}
+
+/* =========================================================
+                        LEVEL 4
+========================================================= */
+class Level4 extends Phaser.Scene {
+  constructor() { super("Level4"); }
+
+  create() {
+    this.platforms = this.physics.add.staticGroup();
+    this.spikes = this.physics.add.staticGroup();
+    this.redCircles = this.physics.add.group();
+
+    // Plateformes
+    createPlatform(this, 0, 480, 120, 120);
+    createPlatform(this, 240, 440, 40, 40);
+    createPlatform(this, 440, 520, 40, 40);
+    createPlatform(this, 680, 480, 120, 40);
+    createPlatform(this, 720, 360, 80, 40);
+    createPlatform(this, 480, 320, 40, 40);
+    createPlatform(this, 440, 200, 40, 160);
+    createPlatform(this, 680, 240, 80, 40);
+    createPlatform(this, 680, 160, 40, 80);
+    createPlatform(this, 720, 0, 80, 80);
+    createPlatform(this, 240, 0, 280, 40);
+    createPlatform(this, 240, 160, 280, 40);
+    createPlatform(this, 0, 200, 280, 40);
+    createPlatform(this, 0, 160, 40, 40);
+    createPlatform(this, 0, 0, 40, 40);
+
+		//bouton
+		const backButton = this.add.text(5, 5, "←", {
+            fontSize: "24px",
+            color: "#ffffff",
+            backgroundColor: "#00BFFF",
+            padding: { x: 7, y: 4 },
+            borderRadius: 5
+        }).setInteractive();
+
+        backButton.on("pointerdown", () => {
+            this.scene.start("MenuScene");
+        });
+
+    // Joueur
+    const playerSize = 40;
+    const playerGfx = this.add.graphics();
+    playerGfx.fillStyle(0xAA66CC, 1);
+    playerGfx.fillRect(0, 0, playerSize, playerSize);
+    playerGfx.generateTexture('playerSquare', playerSize, playerSize);
+    playerGfx.destroy();
+
+    this.player = this.physics.add.sprite(60, 370, 'playerSquare');
+    this.player.setBounce(0.2);
+    this.player.setCollideWorldBounds(true);
+
+    // Piques Level 4
+    const spikePositions = [
+      {x:140, y:600}, {x:180, y:600}, {x:220, y:600}, {x:260, y:600}, {x:300, y:600},
+      {x:340, y:600}, {x:380, y:600}, {x:420, y:600}, {x:460, y:600}, {x:500, y:600},
+      {x:540, y:600}, {x:580, y:600}, {x:620, y:600}, {x:660, y:600}, {x:700, y:600},
+      {x:740, y:600}, {x:780, y:600}, {x:800, y:460, orientation:'left'}, {x:800, y:420, orientation:'left'},
+      {x:440, y:260, orientation:'left'}, {x:440, y:300, orientation:'left'}, {x:440, y:340, orientation:'left'},
+      {x:720, y:380, orientation:'left'}, {x:680, y:260, orientation:'left'}, {x:680, y:220, orientation:'left'},
+      {x:680, y:180, orientation:'left'}, {x:740, y:80, orientation:'down'}, {x:780, y:80, orientation:'down'},
+      {x:720, y:60, orientation:'left'}, {x:720, y:20, orientation:'left'}, {x:440, y:220, orientation:'left'},
+      {x:520, y:180, orientation:'right'}, {x:520, y:20, orientation:'right'},
+      {x:220, y:0, orientation:'down'}, {x:220, y:200}, {x:180, y:200}, {x:140, y:200}, {x:100, y:200}, {x:60, y:200},
+      {x:180, y:0, orientation:'down'}, {x:140, y:0, orientation:'down'}, {x:100, y:0, orientation:'down'}, {x:60, y:0, orientation:'down'},
+      {x:0, y:60, orientation:'right'}, {x:0, y:100, orientation:'right'}, {x:0, y:140, orientation:'right'}
+    ];
+
+    spikePositions.forEach(spike => createRedTriangle(this, spike.x, spike.y, spike.orientation));
+
+    // Boules rouges
+    this.redCircles.add(createRedCircle(this, 460, 150));
+    this.redCircles.add(createRedCircle(this, 380, 50, 100, 'down'));
+    this.redCircles.add(createRedCircle(this, 300, 150));
+
+    // Boule bleue
+    this.blueCircle = createBlueCircle(this, 100, 100);
+
+    // Collisions
+    this.physics.add.collider(this.player, this.platforms);
+    this.physics.add.collider(this.player, this.spikes, (p,s) => onPlayerHitSpike(p,s,this));
+    this.physics.add.overlap(this.player, this.redCircles, () => this.scene.restart());
+    this.physics.add.overlap(this.player, this.blueCircle, () => {
+		showInterstitial()
+        this.scene.start("MenuScene");
+    });
+
+    this.cursors = this.input.keyboard.createCursorKeys();
+    this.jumpCount = 0;
+  }
+
+  update() {
+    const p = this.player;
+
+    // Déplacements horizontaux
+    if (this.cursors.left.isDown) p.setVelocityX(-160);
+    else if (this.cursors.right.isDown) p.setVelocityX(160);
+    else p.setVelocityX(0);
+
+    // Reset du compteur de saut
+    if (p.body.touching.down) this.jumpCount = 0;
+
+    // Saut + double saut rotatif
+    if (Phaser.Input.Keyboard.JustDown(this.cursors.up) && this.jumpCount < 2) {
+        p.setVelocityY(-330);
+
+        // Rotation uniquement au second saut
+        if (this.jumpCount === 1) {
+            let direction = 0;
+
+            // direction selon touches
+            if (this.cursors.left.isDown) direction = -1;
+            else if (this.cursors.right.isDown) direction = 1;
+
+            // sinon direction selon orientation du sprite
+            if (direction === 0)
+                direction = p.scaleX >= 0 ? 1 : -1;
+
+            this.tweens.add({
+                targets: p,
+                angle: p.angle + 180 * direction,
+                duration: 500,
+                ease: "Cubic.easeOut"
+            });
+        }
+
+        this.jumpCount++;
+    }
+}
+}
+
+
+/* =========================================================
+                        LEVEL 5
+========================================================= */
+class Level5 extends Phaser.Scene {
+  constructor() { super("Level5"); }
+
+  create() {
+    this.platforms = this.physics.add.staticGroup();
+    this.spikes = this.physics.add.staticGroup();
+    this.redCircles = this.physics.add.group();
+
+		//bouton
+		const backButton = this.add.text(5, 5, "←", {
+            fontSize: "24px",
+            color: "#ffffff",
+            backgroundColor: "#00BFFF",
+            padding: { x: 7, y: 4 },
+            borderRadius: 5
+        }).setInteractive();
+
+        backButton.on("pointerdown", () => {
+            this.scene.start("MenuScene");
+        });
+
+    // Plateformes
+    createPlatform(this, 0, 560, 800, 40); // sol
+    createPlatform(this, 0, 80, 120, 80);
+    createPlatform(this, 0, 160, 80, 400);
+    createPlatform(this, 280, 0, 40, 480);
+    createPlatform(this, 320, 400, 360, 40);
+    createPlatform(this, 720, 520, 80, 40);
+    createPlatform(this, 760, 480, 40, 40);
+    createPlatform(this, 400, 280, 400, 40);
+    createPlatform(this, 680, 120, 120, 40);
+    createPlatform(this, 320, 40, 160, 160, 0xAA66CC);
+    createPlatform(this, 480, 0, 40, 200);
+    createPlatform(this, 320, 160, 160, 40);
+    createPlatform(this, 320, 0, 160, 40);
+
+    // Joueur
+    const playerSize = 40;
+    const playerGfx = this.add.graphics();
+    playerGfx.fillStyle(0xAA66CC, 1);
+    playerGfx.fillRect(0, 0, playerSize, playerSize);
+    playerGfx.generateTexture('playerSquare', playerSize, playerSize);
+    playerGfx.destroy();
+
+    this.player = this.physics.add.sprite(60, 0, 'playerSquare');
+    this.player.setBounce(0.2);
+    this.player.setCollideWorldBounds(true);
+
+    // Piques Level 5
+    const spikePositions = [
+      {x:280, y:20, orientation:'left'}, {x:280, y:60, orientation:'left'}, {x:280, y:100, orientation:'left'},
+      {x:280, y:140, orientation:'left'}, {x:280, y:180, orientation:'left'}, {x:280, y:220, orientation:'left'},
+      {x:280, y:260, orientation:'left'}, {x:280, y:300, orientation:'left'}, {x:280, y:340, orientation:'left'},
+      {x:280, y:380, orientation:'left'}, {x:280, y:420, orientation:'left'}, {x:280, y:460, orientation:'left'},
+      {x:80, y:180, orientation:'right'}, {x:80, y:220, orientation:'right'}, {x:80, y:260, orientation:'right'},
+      {x:80, y:300, orientation:'right'}, {x:80, y:340, orientation:'right'}, {x:80, y:380, orientation:'right'},
+      {x:80, y:420, orientation:'right'}, {x:80, y:460, orientation:'right'}, {x:80, y:500, orientation:'right'},
+      {x:80, y:540, orientation:'right'}, {x:400, y:560}, {x:440, y:560},
+      {x:780, y:320, orientation:'down'}, {x:740, y:320, orientation:'down'}, {x:700, y:320, orientation:'down'},
+      {x:660, y:320, orientation:'down'}, {x:620, y:320, orientation:'down'}, {x:580, y:320, orientation:'down'},
+      {x:420, y:320, orientation:'down'}, {x:780, y:160, orientation:'down'}, {x:740, y:160, orientation:'down'},
+      {x:700, y:160, orientation:'down'}, {x:340, y:200, orientation:'down'}, {x:380, y:200, orientation:'down'},
+      {x:420, y:200, orientation:'down'}, {x:460, y:200, orientation:'down'}, {x:500, y:200, orientation:'down'},
+      {x:520, y:180, orientation:'right'}, {x:520, y:140, orientation:'right'}, {x:520, y:100, orientation:'right'},
+      {x:520, y:60, orientation:'right'}, {x:520, y:20, orientation:'right'}
+    ];
+    spikePositions.forEach(spike => createRedTriangle(this, spike.x, spike.y, spike.orientation));
+
+    // Boules rouges
+    this.redCircles.add(createRedCircle(this, 220, 460, 0));
+    this.redCircles.add(createRedCircle(this, 140, 220, 0));
+    this.redCircles.add(createRedCircle(this, 560, 550));
+    this.redCircles.add(createRedCircle(this, 600, 550));
+    this.redCircles.add(createRedCircle(this, 640, 450, 100, 'down'));
+    this.redCircles.add(createRedCircle(this, 540, 330, 60, 'down'));
+    this.redCircles.add(createRedCircle(this, 470, 390, 60));
+
+    // Boule bleue
+    this.blueCircle = createBlueCircle(this, 740, 60);
+
+    // Collisions
+    this.physics.add.collider(this.player, this.platforms);
+    this.physics.add.collider(this.player, this.spikes, (p,s) => onPlayerHitSpike(p,s,this));
+    this.physics.add.overlap(this.player, this.redCircles, () => this.scene.restart());
+    this.physics.add.overlap(this.player, this.blueCircle, () => {
+      showInterstitial()
+	  this.scene.start("MenuScene");
+    });
+
+    this.cursors = this.input.keyboard.createCursorKeys();
+    this.jumpCount = 0;
+  }
+
+ update() {
+    const p = this.player;
+
+    // Déplacements horizontaux
+    if (this.cursors.left.isDown) p.setVelocityX(-160);
+    else if (this.cursors.right.isDown) p.setVelocityX(160);
+    else p.setVelocityX(0);
+
+    // Reset du compteur de saut
+    if (p.body.touching.down) this.jumpCount = 0;
+
+    // Saut + double saut rotatif
+    if (Phaser.Input.Keyboard.JustDown(this.cursors.up) && this.jumpCount < 2) {
+        p.setVelocityY(-330);
+
+        // Rotation uniquement au second saut
+        if (this.jumpCount === 1) {
+            let direction = 0;
+
+            // direction selon touches
+            if (this.cursors.left.isDown) direction = -1;
+            else if (this.cursors.right.isDown) direction = 1;
+
+            // sinon direction selon orientation du sprite
+            if (direction === 0)
+                direction = p.scaleX >= 0 ? 1 : -1;
+
+            this.tweens.add({
+                targets: p,
+                angle: p.angle + 180 * direction,
+                duration: 500,
+                ease: "Cubic.easeOut"
+            });
+        }
+
+        this.jumpCount++;
+    }
+}
+}
+
+
+/* =========================================================
+                    CONFIG JEU
+========================================================= */
+const config = {
+  type: Phaser.AUTO,
+  width: 800,
+  height: 600,
+  backgroundColor: '#ADD8E6',
+  physics: { default: 'arcade', arcade: { gravity: { y: 650 }, debug: false } },
+  scene: [MenuScene, Level1, Level2, Level3, Level4, Level5]
+};
+
+const game = new Phaser.Game(config);
+		</script>
+    </body>
+</html>
