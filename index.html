@@ -127,7 +127,7 @@ class MenuScene extends Phaser.Scene {
             fontSize: "50px",
             color: "#ffffffff"
         }).setOrigin(0.5);
-
+		createPlatform(this, 0, 560, 800);
         // Création des boutons pour chaque niveau
         const niveaux = [
             { nom: "➡ Level 1", scene: "Level1" },
@@ -1056,6 +1056,7 @@ const game = new Phaser.Game(config);
     </body>
 
 </html>
+
 
 
 
