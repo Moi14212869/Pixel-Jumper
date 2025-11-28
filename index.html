@@ -1052,6 +1052,10 @@ const config = {
   height: 600,
   backgroundColor: '#ADD8E6',
   physics: { default: 'arcade', arcade: { gravity: { y: 650 }, debug: false } },
+   scale: {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Sca
+   }
   scene: [MenuScene, Level1, Level2, Level3, Level4, Level5]
 };
 
@@ -1059,5 +1063,6 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
