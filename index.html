@@ -84,65 +84,48 @@ function createBlueCircle(scene, x, y) {
 }
 
 function createRedTriangle(scene, x, y, orientation = 'up') {
-  const size = 40;
-  const height = Math.sqrt(3) / 2 * size;
-  const key = `triangle-${x}-${y}-${orientation}`;
+    const size = 40;
+    const height = Math.sqrt(3) / 2 * size;
+    const key = `triangle-${x}-${y}-${orientation}`;
 
-  const gfx = scene.add.graphics();
-  gfx.fillStyle(0xFF0000, 1);
-  gfx.beginPath();
+    const gfx = scene.add.graphics();
+    gfx.fillStyle(0xFF0000, 1);
+    gfx.beginPath();
 
-  if (orientation === 'up') {
-    gfx.moveTo(size / 2, 0);
-    gfx.lineTo(0, height);
-    gfx.lineTo(size, height);
-  } else if (orientation === 'down') {
-    gfx.moveTo(size / 2, height);
-    gfx.lineTo(0, 0);
-    gfx.lineTo(size, 0);
-  } else if (orientation === 'left') {
-    gfx.moveTo(0, size / 2);
-    gfx.lineTo(height, 0);
-    gfx.lineTo(height, size);
-  } else if (orientation === 'right') {
-    gfx.moveTo(height, size / 2);
-    gfx.lineTo(0, 0);
-    gfx.lineTo(0, size);
-  }
+    if (orientation === 'up') { gfx.moveTo(size / 2, 0); gfx.lineTo(0, height); gfx.lineTo(size, height); }
+    else if (orientation === 'down') { gfx.moveTo(size / 2, height); gfx.lineTo(0, 0); gfx.lineTo(size, 0); }
+    else if (orientation === 'left') { gfx.moveTo(0, size / 2); gfx.lineTo(height, 0); gfx.lineTo(height, size); }
+    else if (orientation === 'right') { gfx.moveTo(height, size / 2); gfx.lineTo(0, 0); gfx.lineTo(0, size); }
 
-  gfx.closePath();
-  gfx.fillPath();
+    gfx.closePath();
+    gfx.fillPath();
 
-  if (orientation === 'left' || orientation === 'right') {
-    gfx.generateTexture(key, height, size);
-  } else {
-    gfx.generateTexture(key, size, height);
-  }
-  gfx.destroy();
+    if (orientation === 'left' || orientation === 'right') gfx.generateTexture(key, height, size);
+    else gfx.generateTexture(key, size, height);
+    gfx.destroy();
 
-  const triangle = scene.spikes.create(x, y, key);
+    const triangle = scene.spikes.create(x, y, key);
 
-  switch (orientation) {
-    case 'up': triangle.setOrigin(0.5, 1); break;
-    case 'down': triangle.setOrigin(0.5, 0); break;
-    case 'left': triangle.setOrigin(1, 0.5); break;
-    case 'right': triangle.setOrigin(0, 0.5); break;
-  }
+    switch (orientation) {
+        case 'up': triangle.setOrigin(0.5, 1); break;
+        case 'down': triangle.setOrigin(0.5, 0); break;
+        case 'left': triangle.setOrigin(1, 0.5); break;
+        case 'right': triangle.setOrigin(0, 0.5); break;
+    }
 
-  triangle.refreshBody();
+    triangle.refreshBody();
 
-  const body = triangle.body;
-  const bodyWidth = body.width * 0.7;
-  const bodyHeight = body.height * 0.7;
-  const offsetX = (body.width - bodyWidth) / 2;
-  const offsetY = (body.height - bodyHeight) / 2;
+    const body = triangle.body;
+    const bodyWidth = body.width * 0.7;
+    const bodyHeight = body.height * 0.7;
+    const offsetX = (body.width - bodyWidth) / 2;
+    const offsetY = (body.height - bodyHeight) / 2;
 
-  body.setSize(bodyWidth, bodyHeight);
-  body.setOffset(offsetX, offsetY);
+    body.setSize(bodyWidth, bodyHeight);
+    body.setOffset(offsetX, offsetY);
 
-  return triangle;
+    return triangle;
 }
-
 
 
 /* =========================================================
@@ -988,6 +971,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
