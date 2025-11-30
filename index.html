@@ -565,29 +565,30 @@ class Level3 extends Phaser.Scene {
     this.player.setCollideWorldBounds(true);
 
     // Piques Level 3
-    createRedTriangle(this, 60, 520);
-    createRedTriangle(this, 420, 560);
-    createRedTriangle(this, 460, 560);
-    createRedTriangle(this, 500, 560);
-    createRedTriangle(this, 60, 440, "down");
-    createRedTriangle(this, 620, 560);
-    createRedTriangle(this, 780, 280, "down");
-    createRedTriangle(this, 740, 240, "down");
-    createRedTriangle(this, 660, 360);
-    createRedTriangle(this, 620, 360);
-    createRedTriangle(this, 100, 360);
-    createRedTriangle(this, 140, 360);
-    createRedTriangle(this, 0, 300, "right");
-    createRedTriangle(this, 0, 260, "right");
-    createRedTriangle(this, 0, 220, "right");
-    createRedTriangle(this, 0, 180, "right");
-    createRedTriangle(this, 0, 140, "right");
-    createRedTriangle(this, 60, 80, "down");
-    createRedTriangle(this, 100, 40, "down");
-    createRedTriangle(this, 140, 40, "down");
-    createRedTriangle(this, 180, 40, "down");
-    createRedTriangle(this, 800, 60, "left");
-    createRedTriangle(this, 800, 100, "left");
+  this.spikes = this.physics.add.staticGroup();
+  createRedTriangle.call(this, 60, 520);
+  createRedTriangle.call(this, 420, 560);
+  createRedTriangle.call(this, 460, 560);
+  createRedTriangle.call(this, 500, 560);
+  createRedTriangle.call(this, 60, 440, "down");
+  createRedTriangle.call(this, 620, 560);
+  createRedTriangle.call(this, 780, 280, "down");
+  createRedTriangle.call(this, 740, 240, "down");
+  createRedTriangle.call(this, 660, 360);
+  createRedTriangle.call(this, 620, 360);
+  createRedTriangle.call(this, 100, 360);
+  createRedTriangle.call(this, 140, 360);
+  createRedTriangle.call(this, 0, 300, "right");
+  createRedTriangle.call(this, 0, 260, "right");
+  createRedTriangle.call(this, 0, 220, "right");
+  createRedTriangle.call(this, 0, 180, "right");
+  createRedTriangle.call(this, 0, 140, "right");
+  createRedTriangle.call(this, 60, 80, "down");
+  createRedTriangle.call(this, 100, 40, "down");
+  createRedTriangle.call(this, 140, 40, "down");
+  createRedTriangle.call(this, 180, 40, "down");
+  createRedTriangle.call(this, 800, 60, "left");
+  createRedTriangle.call(this, 800, 100, "left");
 
     // Boules rouges Level 3
     this.redCircles.add(createRedCircle(this, 200, 550));
@@ -1001,6 +1002,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
