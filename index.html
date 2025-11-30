@@ -83,33 +83,80 @@ function createBlueCircle(scene, x, y) {
     return circle;
 }
 
-function createRedTriangle(scene, x, y) {
-    const size = 40;
-    const height = Math.sqrt(3) / 2 * size;
+function createRedTriangle(x, y, orientation = 'up') {
+  const size = 40;
+  const height = Math.sqrt(3) / 2 * size;
+  const key = `triangle-${x}-${y}-${orientation}`;
 
-    const gfx = scene.add.graphics();
-    gfx.fillStyle(0xFF0000, 1);
-    gfx.beginPath();
+  const gfx = this.add.graphics();
+  gfx.fillStyle(0xFF0000, 1);
+  gfx.beginPath();
+
+  if (orientation === 'up') {
+    // Pointe vers le haut
     gfx.moveTo(size / 2, 0);
     gfx.lineTo(0, height);
     gfx.lineTo(size, height);
-    gfx.closePath();
-    gfx.fillPath();
+  } else if (orientation === 'down') {
+    // Pointe vers le bas
+    gfx.moveTo(size / 2, height);
+    gfx.lineTo(0, 0);
+    gfx.lineTo(size, 0);
+  } else if (orientation === 'left') {
+    // Pointe vers la gauche
+    gfx.moveTo(0, size / 2);
+    gfx.lineTo(height, 0);
+    gfx.lineTo(height, size);
+  } else if (orientation === 'right') {
+    // Pointe vers la droite
+    gfx.moveTo(height, size / 2);
+    gfx.lineTo(0, 0);
+    gfx.lineTo(0, size);
+  }
 
-    const key = `triangle-${x}-${y}`;
+  gfx.closePath();
+  gfx.fillPath();
+
+  // Génère une texture avec les dimensions adaptées
+  if (orientation === 'left' || orientation === 'right') {
+    gfx.generateTexture(key, height, size);
+  } else {
     gfx.generateTexture(key, size, height);
-    gfx.destroy();
+  }
+  gfx.destroy();
 
-    const tri = scene.spikes.create(x, y, key);
-    tri.setOrigin(0.5, 1);
-    tri.refreshBody();
+  // Ajoute le sprite dans la scène
+  const triangle = this.spikes.create(x, y, key);
 
-    const bw = tri.body.width * 0.7;
-    const bh = tri.body.height * 0.7;
-    tri.body.setSize(bw, bh);
-    tri.body.setOffset((tri.body.width - bw) / 2, tri.body.height - bh);
+  // Positionne précisément selon l'orientation
+  switch (orientation) {
+    case 'up':
+      triangle.setOrigin(0.5, 1); // base collée au sol
+      break;
+    case 'down':
+      triangle.setOrigin(0.5, 0); // base collée au plafond
+      break;
+    case 'left':
+      triangle.setOrigin(1, 0.5); // base collée mur droit
+      break;
+    case 'right':
+      triangle.setOrigin(0, 0.5); // base collée mur gauche
+      break;
+  }
 
-    return tri;
+  triangle.refreshBody();
+
+  // Hitbox ajustée
+  const body = triangle.body;
+  const bodyWidth = body.width * 0.7;
+  const bodyHeight = body.height * 0.7;
+  const offsetX = (body.width - bodyWidth) / 2;
+  const offsetY = (body.height - bodyHeight) / 2;
+
+  body.setSize(bodyWidth, bodyHeight);
+  body.setOffset(offsetX, offsetY);
+
+  return triangle;
 }
 
 /* =========================================================
@@ -954,6 +1001,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
