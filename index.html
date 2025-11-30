@@ -18,6 +18,13 @@
 		<script src="https://poki.com/sdk/poki.js"></script>
     </head>
     <body>
+		<!-- Contrôles tactiles -->
+<div id="controls" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px;">
+    <button id="leftBtn" style="width: 60px; height: 60px;">◀</button>
+    <button id="jumpBtn" style="width: 60px; height: 60px;">⬆</button>
+    <button id="rightBtn" style="width: 60px; height: 60px;">▶</button>
+</div>
+
         <script>
 		/* =========================================================
                     FONCTIONS COMMUNES
@@ -971,6 +978,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
