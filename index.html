@@ -993,6 +993,63 @@ jumpPlayer() {
     }
 }
 }
+/* =========================================================
+                        SHOP SCENE
+========================================================= */
+class ShopScene extends Phaser.Scene {
+    constructor() {
+        super("ShopScene");
+    }
+
+    create() {
+        // Fond
+        this.add.rectangle(400, 300, 800, 600, 0x333333);
+
+        // Titre
+        this.add.text(400, 50, "Boutique", {
+            fontSize: "48px",
+            color: "#ffffff"
+        }).setOrigin(0.5);
+
+        // Items à acheter (exemple)
+        const items = [
+            { name: "Couleur Joueur Rose", key: "pink", price: 100 },
+            { name: "Couleur Joueur Vert", key: "green", price: 150 },
+            { name: "Double Jump", key: "doubleJump", price: 200 }
+        ];
+
+        let yPos = 150;
+        items.forEach(item => {
+            const itemText = this.add.text(400, yPos, `${item.name} - ${item.price} pièces`, {
+                fontSize: "28px",
+                color: "#ffffff",
+                backgroundColor: "#00BFFF",
+                padding: { x: 10, y: 5 },
+                borderRadius: 5
+            }).setOrigin(0.5).setInteractive();
+
+            itemText.on("pointerdown", () => {
+                alert(`Achat de ${item.name} pour ${item.price} pièces !`);
+                // Ici tu peux ajouter la logique d'achat réel
+            });
+
+            yPos += 70;
+        });
+
+        // Bouton retour
+        const backButton = this.add.text(5, 5, "← Menu", {
+            fontSize: "24px",
+            color: "#ffffff",
+            backgroundColor: "#FF4500",
+            padding: { x: 7, y: 4 },
+            borderRadius: 5
+        }).setInteractive();
+
+        backButton.on("pointerdown", () => {
+            this.scene.start("MenuScene");
+        });
+    }
+}
 
 
 /* =========================================================
@@ -1008,13 +1065,14 @@ const config = {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH
    },
-  scene: [MenuScene, Level1, Level2, Level3, Level4, Level5]
+  scene: [MenuScene, Level1, Level2, Level3, Level4, Level5, ShopScene]
 };
 
 const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
