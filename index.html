@@ -24,7 +24,7 @@
 		/* =========================================================
                     FONCTIONS COMMUNES
 ========================================================= */
-let playerCoins = 0;
+let playerCoins = parseInt(localStorage.getItem("playerCoins")) || 0;
 let pokiReady = false;
 let colorPlayer = 0xAA66CC
 window.PokiSDK && PokiSDK.init && PokiSDK.init().then(() => {
@@ -262,7 +262,8 @@ class Level1 extends Phaser.Scene {
       ease: 'Cubic.easeInOut',
       onComplete: () => {
 		  showInterstitial();
-		  playerCoins += 10; // ajoute 10 pièces
+		  playerCoins += 10;
+		  localStorage.setItem("playerCoins", playerCoins)
 		  this.scene.start("MenuScene");
 	  }
 
@@ -411,6 +412,8 @@ class Level2 extends Phaser.Scene {
       ease: 'Cubic.easeInOut',
       onComplete: () => {
 		showInterstitial()
+		playerCoins += 10;
+		localStorage.setItem("playerCoins", playerCoins)
         this.scene.start("MenuScene");
       }
     });
@@ -626,6 +629,8 @@ class Level3 extends Phaser.Scene {
       ease: 'Cubic.easeInOut',
       onComplete: () => {
 		showInterstitial()
+		playerCoins += 10;
+		localStorage.setItem("playerCoins", playerCoins)
         this.scene.start("MenuScene");
       }
     });
@@ -784,6 +789,8 @@ class Level4 extends Phaser.Scene {
       ease: 'Cubic.easeInOut',
       onComplete: () => {
 		showInterstitial()
+		playerCoins += 10;
+		localStorage.setItem("playerCoins", playerCoins)
         this.scene.start("MenuScene");
       }
     });
@@ -947,6 +954,8 @@ this.player.setCollideWorldBounds(true);
       ease: 'Cubic.easeInOut',
       onComplete: () => {
 		showInterstitial()
+		playerCoins += 10;
+		localStorage.setItem("playerCoins", playerCoins)
         this.scene.start("MenuScene");
       }
     });
@@ -1081,6 +1090,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
