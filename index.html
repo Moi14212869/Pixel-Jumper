@@ -1195,13 +1195,14 @@ this.player.setCollideWorldBounds(true);
   createRedTriangle(this, 220, 120, 'down');
   createRedTriangle(this, 180, 120, 'down');
     // Boules rouges
-  this.redCircles.add(createRedCircle(300, 370, this, 180, 'down'));
-  this.redCircles.add(createRedCircle(180, 10, this, 60, 'down'));
-  this.redCircles.add(createRedCircle(260, 70, this, 60));
-  this.redCircles.add(createRedCircle(340, 10, this, 60, 'down'));
-  this.redCircles.add(createRedCircle(420, 70, this, 60));
-  this.redCircles.add(createRedCircle(500, 10, this, 60, 'down'));
-  this.redCircles.add(createRedCircle(580, 70, this, 60));
+this.redCircles.add(createRedCircle(this, 300, 370, 180, 'down'));
+this.redCircles.add(createRedCircle(this, 180, 10, 60, 'down'));
+this.redCircles.add(createRedCircle(this, 260, 70, 60));
+this.redCircles.add(createRedCircle(this, 340, 10, 60, 'down'));
+this.redCircles.add(createRedCircle(this, 420, 70, 60));
+this.redCircles.add(createRedCircle(this, 500, 10, 60, 'down'));
+this.redCircles.add(createRedCircle(this, 580, 70, 60));
+
 //carrés rouges
   this.redSquares = this.physics.add.group();
   this.physics.add.collider(this.redSquares, platforms);
@@ -1312,6 +1313,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
