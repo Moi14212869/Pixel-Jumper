@@ -1089,7 +1089,7 @@ itemText.on("pointerdown", () => {
     colorPlayer = typeof item.key === 'string' && item.key.startsWith('#') 
                   ? parseInt(item.key.replace('#',''), 16) 
                   : parseInt(item.key);
-	localStorage.setItem("colorPlayer", colorPlayer)
+	localStorage.setItem("colorPlayer", colorPlayer);
 	this.scene.start("ShowPlayer");
 });
 
@@ -1402,6 +1402,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
