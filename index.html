@@ -168,7 +168,8 @@ class MenuScene extends Phaser.Scene {
             { nom: "➡ Level 2", scene: "Level2" },
             { nom: "➡ Level 3", scene: "Level3" },
             { nom: "➡ Level 4", scene: "Level4" },
-            { nom: "➡ Level 5", scene: "Level5" }
+            { nom: "➡ Level 5", scene: "Level5" },
+			{ nom: "➡ Level 6", scene: "Level6" }
         ];
 
         let yPos = 260;
@@ -1067,8 +1068,169 @@ itemText.on("pointerdown", () => {
         });
     }
 }
+/* =========================================================
+                        LEVEL 6
+========================================================= */
+class Level6 extends Phaser.Scene {
+  constructor() { super("Level6"); }
+
+  create() {
+	this.transitioning = false;
+    this.platforms = this.physics.add.staticGroup();
+    this.spikes = this.physics.add.staticGroup();
+    this.redCircles = this.physics.add.group();
+
+		//bouton
+		const backButton = this.add.text(5, 5, "←", {
+            fontSize: "24px",
+            color: "#ffffff",
+            backgroundColor: "#00BFFF",
+            padding: { x: 7, y: 4 },
+            borderRadius: 5
+        }).setInteractive();
+
+        backButton.on("pointerdown", () => {
+            this.scene.start("MenuScene");
+        });
+
+    // Plateformes
+    createPlatform(this, 0, 560, 800, 40); // sol
+    createPlatform(this, 0, 80, 120, 80);
+    createPlatform(this, 0, 160, 80, 400);
+    createPlatform(this, 280, 0, 40, 480);
+    createPlatform(this, 320, 400, 360, 40);
+    createPlatform(this, 720, 520, 80, 40);
+    createPlatform(this, 760, 480, 40, 40);
+    createPlatform(this, 400, 280, 400, 40);
+    createPlatform(this, 680, 120, 120, 40);
+    createPlatform(this, 320, 40, 160, 160, 0xAA66CC);
+    createPlatform(this, 480, 0, 40, 200);
+    createPlatform(this, 320, 160, 160, 40);
+    createPlatform(this, 320, 0, 160, 40);
+
+    // Joueur
+    const playerSize = 40;
+   const playerGfx = this.add.graphics();
+playerGfx.fillStyle(colorPlayer, 1);
+playerGfx.fillRect(0, 0, playerSize, playerSize);
+playerGfx.generateTexture('playerSquare', playerSize, playerSize);
+playerGfx.destroy();
+
+this.player = this.physics.add.sprite(60, 0, 'playerSquare');
+this.player.setBounce(0.2);
+this.player.setCollideWorldBounds(true);
+    // Piques Level 5
+    const spikePositions = [
+      {x:280, y:20, orientation:'left'}, {x:280, y:60, orientation:'left'}, {x:280, y:100, orientation:'left'},
+      {x:280, y:140, orientation:'left'}, {x:280, y:180, orientation:'left'}, {x:280, y:220, orientation:'left'},
+      {x:280, y:260, orientation:'left'}, {x:280, y:300, orientation:'left'}, {x:280, y:340, orientation:'left'},
+      {x:280, y:380, orientation:'left'}, {x:280, y:420, orientation:'left'}, {x:280, y:460, orientation:'left'},
+      {x:80, y:180, orientation:'right'}, {x:80, y:220, orientation:'right'}, {x:80, y:260, orientation:'right'},
+      {x:80, y:300, orientation:'right'}, {x:80, y:340, orientation:'right'}, {x:80, y:380, orientation:'right'},
+      {x:80, y:420, orientation:'right'}, {x:80, y:460, orientation:'right'}, {x:80, y:500, orientation:'right'},
+      {x:80, y:540, orientation:'right'}, {x:400, y:560}, {x:440, y:560},
+      {x:780, y:320, orientation:'down'}, {x:740, y:320, orientation:'down'}, {x:700, y:320, orientation:'down'},
+      {x:660, y:320, orientation:'down'}, {x:620, y:320, orientation:'down'}, {x:580, y:320, orientation:'down'},
+      {x:420, y:320, orientation:'down'}, {x:780, y:160, orientation:'down'}, {x:740, y:160, orientation:'down'},
+      {x:700, y:160, orientation:'down'}, {x:340, y:200, orientation:'down'}, {x:380, y:200, orientation:'down'},
+      {x:420, y:200, orientation:'down'}, {x:460, y:200, orientation:'down'}, {x:500, y:200, orientation:'down'},
+      {x:520, y:180, orientation:'right'}, {x:520, y:140, orientation:'right'}, {x:520, y:100, orientation:'right'},
+      {x:520, y:60, orientation:'right'}, {x:520, y:20, orientation:'right'}
+    ];
+    spikePositions.forEach(spike => createRedTriangle(this, spike.x, spike.y, spike.orientation));
+
+    // Boules rouges
+    this.redCircles.add(createRedCircle(this, 220, 460, 0));
+    this.redCircles.add(createRedCircle(this, 140, 220, 0));
+    this.redCircles.add(createRedCircle(this, 560, 550));
+    this.redCircles.add(createRedCircle(this, 600, 550));
+    this.redCircles.add(createRedCircle(this, 640, 450, 100, 'down'));
+    this.redCircles.add(createRedCircle(this, 540, 330, 60, 'down'));
+    this.redCircles.add(createRedCircle(this, 470, 390, 60));
+
+    // Boule bleue
+    this.blueCircle = createBlueCircle(this, 740, 60);
+
+    // Collisions
+    this.physics.add.collider(this.player, this.platforms);
+    this.physics.add.collider(this.player, this.spikes, (p,s) => onPlayerHitSpike(p,s,this));
+    this.physics.add.overlap(this.player, this.redCircles, () => this.scene.restart());
+ 	this.physics.add.overlap(this.player, this.blueCircle, () => {
+    if (this.transitioning) return;
+    this.transitioning = true;
+
+    this.player.body.enable = false;
+
+    const targetX = this.blueCircle.x;
+    const targetY = this.blueCircle.y;
+
+    this.tweens.add({
+      targets: this.player,
+      x: targetX,
+      y: targetY,
+      scale: 0.3,
+      angle: 720,
+      duration: 800,
+      ease: 'Cubic.easeInOut',
+      onComplete: () => {
+		showInterstitial()
+		playerCoins += 10;
+		localStorage.setItem("playerCoins", playerCoins)
+        this.scene.start("MenuScene");
+      }
+    });
+  }, null, this);
+ // --- BOUTONS DANS LE CANVAS ---
+    const btnStyle = { fontSize: "32px", color: "#ffffff", backgroundColor: "#00BFFF", padding: {x:10, y:5}, borderRadius: 5 };
+    this.leftBtn = this.add.text(50, 520, "◀", btnStyle).setInteractive();
+    this.rightBtn = this.add.text(150, 520, "▶", btnStyle).setInteractive();
+    this.jumpBtn = this.add.text(700, 520, "⬆", btnStyle).setInteractive();
+
+    // Variables pour savoir si le bouton est pressé
+    this.movingLeft = false;
+    this.movingRight = false;
+
+    // Événements tactiles
+    this.leftBtn.on('pointerdown', () => this.movingLeft = true);
+    this.leftBtn.on('pointerup', () => this.movingLeft = false);
+    this.rightBtn.on('pointerdown', () => this.movingRight = true);
+    this.rightBtn.on('pointerup', () => this.movingRight = false);
+    this.jumpBtn.on('pointerdown', () => this.jumpPlayer());
+        this.cursors = this.input.keyboard.createCursorKeys();
+        this.jumpCount = 0;
+    }
 
 
+
+update() {
+    const p = this.player;
+
+    // Déplacement horizontal
+    if (this.cursors.left.isDown || this.movingLeft) p.setVelocityX(-160);
+    else if (this.cursors.right.isDown || this.movingRight) p.setVelocityX(160);
+    else p.setVelocityX(0);
+
+    // Reset compteur saut
+    if (p.body.touching.down) this.jumpCount = 0;
+
+    // Saut via clavier
+    if (Phaser.Input.Keyboard.JustDown(this.cursors.up)) this.jumpPlayer();
+}
+
+// --- fonction saut + double saut ---
+jumpPlayer() {
+    if (this.jumpCount < 2) {
+        this.player.setVelocityY(-330);
+
+        if (this.jumpCount === 1) {
+            let dir = this.cursors.left.isDown ? -1 : (this.cursors.right.isDown ? 1 : 1);
+            this.tweens.add({ targets: this.player, angle: this.player.angle + 180 * dir, duration: 500, ease: "Cubic.easeOut" });
+        }
+
+        this.jumpCount++;
+    }
+}
+}
 /* =========================================================
                     CONFIG JEU
 ========================================================= */
@@ -1082,13 +1244,14 @@ const config = {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH
    },
-  scene: [MenuScene, Level1, Level2, Level3, Level4, Level5, ShopScene]
+  scene: [MenuScene, Level1, Level2, Level3, Level4, Level5, ShopScene, Level6]
 };
 
 const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
