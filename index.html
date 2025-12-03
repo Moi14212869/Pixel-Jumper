@@ -1059,8 +1059,6 @@ class ShopScene extends Phaser.Scene {
     }
 
     create() {
-        // Fond
-        this.add.rectangle(400, 300, 800, 600, 0x333333);
 
         // Titre
         this.add.text(400, 50, "Boutique", {
@@ -1094,10 +1092,10 @@ itemText.on("pointerdown", () => {
         });
 
         // Bouton retour
-        const backButton = this.add.text(5, 5, "← Menu", {
+        const backButton = this.add.text(5, 5, "←", {
             fontSize: "24px",
             color: "#ffffff",
-            backgroundColor: "#FF4500",
+            backgroundColor: "#00BFFF",
             padding: { x: 7, y: 4 },
             borderRadius: 5
         }).setInteractive();
@@ -1245,7 +1243,7 @@ this.redCircles.add(createRedCircle(this, 580, 70, 60));
 	   this.physics.add.overlap(this.player, this.redSquares, (player, square) => {
   const playerBottom = player.y + player.displayHeight / 2;
   const squareTop = square.y - square.displayHeight / 2;
-
+		   
   const verticalDiff = playerBottom - squareTop;
 
   // Si le joueur touche par le haut (avec une petite marge de tolérance)
@@ -1338,6 +1336,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
