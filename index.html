@@ -1339,7 +1339,7 @@ class ShowPlayer extends Phaser.Scene {
         g.generateTexture("player", size, size);
         g.destroy();
 
-        this.player = this.physics.add.sprite(100, 450, "player");
+        this.player = this.physics.add.sprite(400, 200, "player");
         this.player.setBounce(0.2).setCollideWorldBounds(true);
 		this.physics.add.collider(this.player, this.platforms);
         // Bouton retour
@@ -1376,4 +1376,5 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
