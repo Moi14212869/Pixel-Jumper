@@ -1383,6 +1383,58 @@ jumpPlayer() {
 }
 }
 /* =========================================================
+                       World 1
+========================================================= */
+
+class World1 extends Phaser.Scene {
+    constructor() {
+        super("World1");
+    }
+
+    create() {
+		
+        const title = this.add.text(400, 120, "World 1", {
+            fontSize: "50px",
+            color: "#ffffffff"
+        }).setOrigin(0.5);
+		this.coinText = this.add.text(780, 20, `💰 ${playerCoins}`, {
+    		fontSize: "28px",
+    		color: "#ffff00"
+		}).setOrigin(1, 0); // aligné à droite
+		const MenuButton = this.add.text(5, 5, "←", {
+            fontSize: "24px",
+            color: "#ffffff",
+            backgroundColor: "#00BFFF",
+            padding: { x: 7, y: 4 },
+            borderRadius: 5
+        }).setInteractive();
+
+        shopButton.on("pointerdown", () => {
+            this.scene.start("MenuScene");
+        });
+        const niveaux = [
+            { nom: "➡ Level 1", scene: "Level1" },
+            { nom: "➡ Level 2", scene: "Level2" },
+            { nom: "➡ Level 3", scene: "Level3" },
+            { nom: "➡ Level 4", scene: "Level4" },
+            { nom: "➡ Level 5", scene: "Level5" },
+			{ nom: "➡ Level 6", scene: "Level6" }
+        ];
+
+        let yPos = 260;
+        niveaux.forEach(niv => {
+            const btn = this.add.text(400, yPos, niv.nom, {
+                fontSize: "34px",
+                color: "#ffffffff"
+            }).setOrigin(0.5).setInteractive();
+
+            btn.on("pointerdown", () => this.scene.start(niv.scene));
+
+            yPos += 60; // écart vertical entre boutons
+        });
+    }
+}
+/* =========================================================
                     CONFIG JEU
 ========================================================= */
 const config = {
@@ -1395,13 +1447,14 @@ const config = {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH
    },
-  scene: [MenuScene, Level1, Level2, Level3, Level4, Level5, ShopScene, Level6, ShowPlayer]
+  scene: [MenuScene, World1, Level1, Level2, Level3, Level4, Level5, ShopScene, Level6, ShowPlayer]
 };
 
 const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
