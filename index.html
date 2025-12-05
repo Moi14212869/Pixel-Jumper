@@ -1392,7 +1392,7 @@ class World1 extends Phaser.Scene {
             borderRadius: 5
         }).setInteractive();
 
-        shopButton.on("pointerdown", () => {
+        MenuButton.on("pointerdown", () => {
             this.scene.start("MenuScene");
         });
         const niveaux = [
@@ -1437,6 +1437,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
