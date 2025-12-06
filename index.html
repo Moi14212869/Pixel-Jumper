@@ -1376,7 +1376,7 @@ class World1 extends Phaser.Scene {
 
     create() {
 		
-        const title = this.add.text(400, 120, "World 1", {
+        const title = this.add.text(400, 80, "World 1", {
             fontSize: "50px",
             color: "#ffffffff"
         }).setOrigin(0.5);
@@ -1395,18 +1395,32 @@ class World1 extends Phaser.Scene {
         MenuButton.on("pointerdown", () => {
             this.scene.start("MenuScene");
         });
-        const niveaux = [
+        const niveaux1 = [
             { nom: "➡ Level 1", scene: "Level1" },
             { nom: "➡ Level 2", scene: "Level2" },
             { nom: "➡ Level 3", scene: "Level3" },
-            { nom: "➡ Level 4", scene: "Level4" },
+            { nom: "➡ Level 4", scene: "Level4" }
+        ];
+
+        let yPos = 260;
+        niveaux1.forEach(niv => {
+            const btn = this.add.text(100, yPos, niv.nom, {
+                fontSize: "34px",
+                color: "#ffffffff"
+            }).setOrigin(0.5).setInteractive();
+
+            btn.on("pointerdown", () => this.scene.start(niv.scene));
+
+            yPos += 60; // écart vertical entre boutons
+        });
+		        const niveaux2 = [
             { nom: "➡ Level 5", scene: "Level5" },
 			{ nom: "➡ Level 6", scene: "Level6" }
         ];
 
         let yPos = 260;
-        niveaux.forEach(niv => {
-            const btn = this.add.text(400, yPos, niv.nom, {
+        niveaux2.forEach(niv => {
+            const btn = this.add.text(500, yPos, niv.nom, {
                 fontSize: "34px",
                 color: "#ffffffff"
             }).setOrigin(0.5).setInteractive();
@@ -1437,6 +1451,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
