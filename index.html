@@ -1411,7 +1411,7 @@ class World1 extends Phaser.Scene {
 
             btn.on("pointerdown", () => this.scene.start(niv.scene));
 
-            yPos += 60; // écart vertical entre boutons
+            yPos1 += 60; // écart vertical entre boutons
         });
 		        const niveaux2 = [
             { nom: "➡ Level 5", scene: "Level5" },
@@ -1427,7 +1427,7 @@ class World1 extends Phaser.Scene {
 
             btn.on("pointerdown", () => this.scene.start(niv.scene));
 
-            yPos += 60; // écart vertical entre boutons
+            yPos2 += 60; // écart vertical entre boutons
         });
     }
 }
@@ -1451,6 +1451,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
