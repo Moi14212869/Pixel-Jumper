@@ -1402,9 +1402,9 @@ class World1 extends Phaser.Scene {
             { nom: "➡ Level 4", scene: "Level4" }
         ];
 
-        let yPos = 260;
+        let yPos2 = 260;
         niveaux1.forEach(niv => {
-            const btn = this.add.text(100, yPos, niv.nom, {
+            const btn = this.add.text(100, yPos2, niv.nom, {
                 fontSize: "34px",
                 color: "#ffffffff"
             }).setOrigin(0.5).setInteractive();
@@ -1451,6 +1451,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
