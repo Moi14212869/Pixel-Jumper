@@ -1059,7 +1059,7 @@ class ShopScene extends Phaser.Scene {
 
     create() {
 
-        this.add.text(400, 20, "SHOP", { fontSize: "40px", fill: "#ffffff" });
+        this.add.text(360, 20, "SHOP", { fontSize: "40px", fill: "#ffffff" });
        this.coinText = this.add.text(780, 20, `💰 ${playerCoins}`, {
     		fontSize: "28px",
     		color: "#ffff00"
@@ -1104,9 +1104,12 @@ class ShopScene extends Phaser.Scene {
             startY += 90;
         });
 
-        const back = this.add.text(20, 430, "Retour Menu", {
-            fontSize: "26px",
-            fill: "#AAAAAA"
+        const back = this.add.text(5, 5, "←", {
+           fontSize: "24px",
+            color: "#ffffff",
+            backgroundColor: "#00BFFF",
+            padding: { x: 7, y: 4 },
+            borderRadius: 5
         });
         back.setInteractive();
         back.on("pointerdown", () => {
@@ -1489,6 +1492,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
