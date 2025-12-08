@@ -1033,59 +1033,82 @@ jumpPlayer() {
     }
 }
 }
-class ShopScene extends Phaser.Scene {
-    constructor() {
-        super("ShopScene");
+/* =====================================================
+                    Shop
+   ===================================================== */
+function normalizeKeyToHex(key) {
+    if (typeof key === "number") {
+        return key.toString(16).toUpperCase().padStart(6, "0");
     }
 
+    key = String(key).trim();
+
+    if (key.startsWith("0x") || key.startsWith("0X")) key = key.slice(2);
+    if (key.startsWith("#")) key = key.slice(1);
+
+    return key.toUpperCase();
+}
+
+// ----------- SHOP SCENE -----------
+class ShopScene extends Phaser.Scene {
+    constructor() {
+        super("Shop");
+    }
+
+    preload() {}
+
     create() {
-        this.add.text(200, 20, "SHOP", { fontSize: "40px", fill: "#ffffff" });
-        this.coinText = this.add.text(780, 20, `💰 ${playerCoins}`, { fontSize: "28px", color: "#ffff00" }).setOrigin(1, 0);
+
+        this.add.text(20, 20, "SHOP", { fontSize: "40px", fill: "#ffffff" });
+        this.coinsText = this.add.text(20, 80, "Coins : " + playerCoins, { fontSize: "28px", fill: "#FFD700" });
 
         const ITEMS = [
-            { key: "AA66CC", label: "Violet", price: 0 },
+            { key: "AA66CC", label: "Violet (gratuit)", price: 0 },
             { key: "73BE73", label: "Vert", price: 50 },
             { key: "CC99A2", label: "Rose", price: 100 }
         ];
 
         let startY = 150;
+
         ITEMS.forEach(item => {
             const hexKey = normalizeKeyToHex(item.key);
             const bought = localStorage.getItem("skin_" + hexKey) === "1";
             const isSelected = localStorage.getItem("colorPlayer") === hexKey;
 
             this.add.rectangle(80, startY, 50, 50, parseInt("0x" + hexKey));
+
             this.add.text(140, startY - 20, item.label, { fontSize: "24px", fill: "#ffffff" });
 
             if (!bought && item.price > 0) {
                 const buyText = this.add.text(350, startY - 20, "Acheter " + item.price + " ⬡", { fontSize: "22px", fill: "#00FFFF" });
                 buyText.setInteractive();
+
                 buyText.on("pointerdown", () => this.buySkin(hexKey, item.price));
             }
 
             if (bought || item.price === 0) {
-                const selectText = this.add.text(350, startY - 20, isSelected ? "Sélectionné" : "Sélectionner", { fontSize: "22px", fill: isSelected ? "#00FF66" : "#FFFFFF" });
+                const selectText = this.add.text(350, startY - 20, isSelected ? "Sélectionné" : "Sélectionner", {
+                    fontSize: "22px",
+                    fill: isSelected ? "#00FF66" : "#FFFFFF"
+                });
                 selectText.setInteractive();
+
                 selectText.on("pointerdown", () => this.selectSkin(hexKey));
             }
 
             startY += 90;
         });
 
-        const backButton = this.add.text(5, 5, "←", {
-            fontSize: "24px",
-            color: "#ffffff",
-            backgroundColor: "#00BFFF",
-            padding: { x: 7, y: 4 },
-            borderRadius: 5
-        }).setInteractive();
-
-        backButton.on("pointerdown", () => {
-            this.scene.start("World1");
+        const back = this.add.text(20, 430, "Retour Menu", {
+            fontSize: "26px",
+            fill: "#AAAAAA"
+        });
+        back.setInteractive();
+        back.on("pointerdown", () => {
+            this.scene.start("Menu");
         });
     }
 
-    // <-- Méthodes de la classe, hors de create()
     buySkin(colorKey, price) {
         if (playerCoins < price) {
             alert("Pas assez de coins !");
@@ -1094,6 +1117,7 @@ class ShopScene extends Phaser.Scene {
 
         playerCoins -= price;
         localStorage.setItem("playerCoins", playerCoins);
+
         localStorage.setItem("skin_" + colorKey, "1");
         this.scene.restart();
     }
@@ -1103,7 +1127,6 @@ class ShopScene extends Phaser.Scene {
         this.scene.restart();
     }
 }
-
 /* =========================================================
                         LEVEL 6
 ========================================================= */
@@ -1461,6 +1484,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
