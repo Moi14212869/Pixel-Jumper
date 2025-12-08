@@ -1132,6 +1132,7 @@ class ShopScene extends Phaser.Scene {
 
     selectSkin(colorKey) {
         localStorage.setItem("colorPlayer", colorKey);
+		colorPlayer = hexKey;
         this.scene.restart();
     }
 }
@@ -1432,6 +1433,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
