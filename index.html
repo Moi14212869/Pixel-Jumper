@@ -1050,7 +1050,23 @@ function normalizeKeyToHex(key) {
 
     return key.toUpperCase();
 }
+buySkin(colorKey, price) {
+        if (playerCoins < price) {
+            alert("Pas assez de coins !");
+            return;
+        }
 
+        playerCoins -= price;
+        localStorage.setItem("playerCoins", playerCoins);
+
+        localStorage.setItem("skin_" + colorKey, "1");
+        this.scene.restart();
+    }
+
+    selectSkin(colorKey) {
+        localStorage.setItem("colorPlayer", colorKey);
+        this.scene.restart();
+    }
 // ----------- SHOP SCENE -----------
 class ShopScene extends Phaser.Scene {
     constructor() {
@@ -1113,24 +1129,6 @@ this.coinText = this.add.text(780, 20, `💰 ${playerCoins}`, {
         backButton.on("pointerdown", () => {
             this.scene.start("World1");
         });
-
-    buySkin(colorKey, price) {
-        if (playerCoins < price) {
-            alert("Pas assez de coins !");
-            return;
-        }
-
-        playerCoins -= price;
-        localStorage.setItem("playerCoins", playerCoins);
-
-        localStorage.setItem("skin_" + colorKey, "1");
-        this.scene.restart();
-    }
-
-    selectSkin(colorKey) {
-        localStorage.setItem("colorPlayer", colorKey);
-        this.scene.restart();
-    }
 }
 /* =========================================================
                         LEVEL 6
@@ -1489,6 +1487,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
