@@ -1099,15 +1099,17 @@ class ShopScene extends Phaser.Scene {
             startY += 90;
         });
 
-        const back = this.add.text(20, 430, "Retour Menu", {
-            fontSize: "26px",
-            fill: "#AAAAAA"
+       const backButton = this.add.text(5, 5, "←", {
+            fontSize: "24px",
+            color: "#ffffff",
+            backgroundColor: "#00BFFF",
+            padding: { x: 7, y: 4 },
+            borderRadius: 5
+        }).setInteractive();
+
+        backButton.on("pointerdown", () => {
+            this.scene.start("World1");
         });
-        back.setInteractive();
-        back.on("pointerdown", () => {
-            this.scene.start("Menu");
-        });
-    }
 
     buySkin(colorKey, price) {
         if (playerCoins < price) {
@@ -1484,6 +1486,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
