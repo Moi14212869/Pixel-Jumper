@@ -222,40 +222,51 @@ class LoadingScene extends Phaser.Scene {
         super("LoadingScene");
     }
 
-    preload() {
-        // Affichage texte de chargement
+    create() {
         const { width, height } = this.scale;
-        const loadingText = this.add.text(width / 2, height / 2, "Chargement...", {
+
+        // Texte "Chargement..."
+        const loadingText = this.add.text(width / 2, height / 2 - 50, "Chargement...", {
             fontSize: "32px",
             fill: "#ffffff"
         }).setOrigin(0.5);
 
-        // Barre de progression
-        const progressBar = this.add.graphics();
+        // Barre de fond
         const progressBox = this.add.graphics();
         progressBox.fillStyle(0x222222, 0.8);
-        progressBox.fillRect(width / 2 - 160, height / 2 + 30, 320, 30);
+        progressBox.fillRect(width / 2 - 160, height / 2, 320, 30);
 
+        // Barre de progression
+        const progressBar = this.add.graphics();
+
+        // Pourcentage
+        const percentText = this.add.text(width / 2, height / 2 + 50, "0%", {
+            fontSize: "20px",
+            fill: "#ffffff"
+        }).setOrigin(0.5);
+
+        // Événement de progression
         this.load.on('progress', (value) => {
             progressBar.clear();
             progressBar.fillStyle(0xffffff, 1);
-            progressBar.fillRect(width / 2 - 150, height / 2 + 40, 300 * value, 10);
+            progressBar.fillRect(width / 2 - 150, height / 2 + 5, 300 * value, 20);
+            percentText.setText(parseInt(value * 100) + "%");
         });
 
+        // Quand le chargement est complet
         this.load.on('complete', () => {
             progressBar.destroy();
             progressBox.destroy();
             loadingText.setText("Prêt !");
+            percentText.destroy();
         });
-    }
-
-    create() {
-        // Après le chargement, démarrer la scène principale
+        // Lancement du menu après un petit délai
         this.time.delayedCall(500, () => {
             this.scene.start("MenuScene");
         });
     }
 }
+
 
 /* =========================================================
                         MENU SCENE
@@ -1487,4 +1498,5 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
