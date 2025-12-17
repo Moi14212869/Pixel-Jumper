@@ -1226,7 +1226,7 @@ class ShopScene extends Phaser.Scene {
         });
         next.setInteractive();
         next.on("pointerdown", () => {
-            this.scene.start("MenuScene2");
+            this.scene.start("ShopScene2");
         });
     }
 
@@ -1323,7 +1323,7 @@ class ShopScene2 extends Phaser.Scene {
         });
         prec.setInteractive();
         prec.on("pointerdown", () => {
-            this.scene.start("MenuScene");
+            this.scene.start("ShopScene");
         });
     }
 
@@ -1639,6 +1639,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
