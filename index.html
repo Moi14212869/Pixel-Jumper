@@ -616,7 +616,7 @@ function createRedCircle(scene, x, y, riseAmount = 100, direction = 'up') {
   return circle;
 }
 function onPlayerHitSpike(player, spike, scene) {
-	this.sound.play('dead', { volume: 0.5 })
+	scene.sound.play('dead', { volume: 0.5 })
   scene.scene.restart();
 }
 function createRedSquare(x, y, scene, distance = 100, direction = 'right') {
@@ -1531,6 +1531,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
