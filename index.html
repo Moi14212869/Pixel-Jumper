@@ -1629,7 +1629,8 @@ class World1 extends Phaser.Scene {
         });
 		        const niveaux2 = [
             { nom: "➡ Level 5", scene: "Level5" },
-			{ nom: "➡ Level 6", scene: "Level6" }
+			{ nom: "➡ Level 6", scene: "Level6" },
+			{ nom: "➡ Level 7", scene: "Level7" }
         ];
 
         let yPos2 = 260;
@@ -1646,6 +1647,193 @@ class World1 extends Phaser.Scene {
     }
 }
 /* =========================================================
+                        LEVEL 7
+========================================================= */
+class Level7 extends Phaser.Scene {
+  constructor() { super("Level7"); }
+
+  create() {
+	this.transitioning = false;
+    this.platforms = this.physics.add.staticGroup();
+    this.spikes = this.physics.add.staticGroup();
+    this.redCircles = this.physics.add.group();
+	this.input.addPointer(2);
+this.cursors = this.input.keyboard.createCursorKeys();
+this.jumpCount = 0;
+
+		//bouton
+		const backButton = this.add.text(5, 5, "←", {
+            fontSize: "24px",
+            color: "#ffffff",
+            backgroundColor: "#00BFFF",
+            padding: { x: 7, y: 4 },
+            borderRadius: 5
+        }).setInteractive();
+
+        backButton.on("pointerdown", () => {
+			this.sound.play('menu', { volume: 0.5 })
+            this.scene.start("World1");
+        });
+
+    // Plateformes
+  createPlatform(this, 0, 560, 800, 40); //sol
+  createPlatform(this, 120, 480, 120, 80);
+  createPlatform(this, 200, 80, 40, 400);
+  createPlatform(this, 360, 0, 40, 480);
+  createPlatform(this, 0, 360, 40, 40);
+  createPlatform(this, 120, 200, 80, 40);
+  createPlatform(this, 0, 0, 40, 40);
+  createPlatform(this, 400, 400, 280, 40);
+  createPlatform(this, 760, 520, 40, 40);
+  createPlatform(this, 520, 200, 280, 40);
+
+    // Joueur
+    const playerSize = 40;
+   const playerGfx = this.add.graphics();
+playerGfx.fillStyle(colorPlayer, 1);
+playerGfx.fillRect(0, 0, playerSize, playerSize);
+playerGfx.generateTexture('playerSquare', playerSize, playerSize);
+playerGfx.destroy();
+
+this.player = this.physics.add.sprite(0, 440, 'playerSquare');
+this.player.setBounce(0.2);
+this.player.setCollideWorldBounds(true);
+    // Piques Level 6
+ createRedTriangle(this, 60, 560);
+  createRedTriangle(this, 100, 560);
+  createRedTriangle(this, 200, 460, 'left');
+  createRedTriangle(this, 200, 420, 'left');
+  createRedTriangle(this, 200, 380, 'left');
+  createRedTriangle(this, 200, 340, 'left');
+  createRedTriangle(this, 200, 300, 'left');
+  createRedTriangle(this, 200, 260, 'left');
+  createRedTriangle(this, 200, 180, 'left');
+  createRedTriangle(this, 200, 140, 'left');
+  createRedTriangle(this, 200, 100, 'left');
+  createRedTriangle(this, 20, 400, 'down');
+  createRedTriangle(this, 20, 40, 'down');
+  createRedTriangle(this, 40, 20, 'right');
+  createRedTriangle(this, 680, 420, 'right');
+  createRedTriangle(this, 780, 240, 'down');
+  createRedTriangle(this, 740, 240, 'down');
+  createRedTriangle(this, 700, 240, 'down');
+  createRedTriangle(this, 660, 240, 'down');
+  createRedTriangle(this, 620, 240, 'down');
+  createRedTriangle(this, 580, 240, 'down');
+  createRedTriangle(this, 540, 240, 'down');
+    // Boules rouges
+  this.redCircles.add(createRedCircle(260, 100, this, 0));
+  this.redCircles.add(createRedCircle(340, 460, this, 0));
+  this.redCircles.add(createRedCircle(300, 280, this, 0));
+  this.redCircles.add(createRedCircle(460, 450, this, -100));
+  this.redCircles.add(createRedCircle(500, 450, this, -100));
+  this.redCircles.add(createRedCircle(540, 550, this, 100));
+
+
+//carrés rouges
+  this.redSquares = this.physics.add.group();
+  this.physics.add.collider(this.redSquares, this.platforms);
+  this.redSquares.add(createRedSquare(420, 380, this, 200, 'right'));
+    // Boule bleue
+    this.blueCircle = createBlueCircle(this, 770, 30);
+
+    // Collisions
+    this.physics.add.collider(this.player, this.platforms);
+    this.physics.add.collider(this.player, this.spikes, (p,s) => onPlayerHitSpike(p,s,this));
+    this.physics.add.overlap(this.player, this.redCircles, () => {
+		this.sound.play('dead', { volume: 0.5 })
+		this.scene.restart();
+	})
+ 	this.physics.add.overlap(this.player, this.blueCircle, () => {
+	this.sound.play('victory', { volume: 0.5 })
+    if (this.transitioning) return;
+    this.transitioning = true;
+
+    this.player.body.enable = false;
+
+    const targetX = this.blueCircle.x;
+    const targetY = this.blueCircle.y;
+
+    this.tweens.add({
+      targets: this.player,
+      x: targetX,
+      y: targetY,
+      scale: 0.3,
+      angle: 720,
+      duration: 800,
+      ease: 'Cubic.easeInOut',
+      onComplete: () => {
+		showInterstitial()
+		playerCoins += 10;
+		localStorage.setItem("playerCoins", playerCoins)
+        this.scene.start("World1");
+      }
+    });
+  }, null, this);
+	   this.physics.add.overlap(this.player, this.redSquares, (player, square) => {
+  const playerBottom = player.y + player.displayHeight / 2;
+  const squareTop = square.y - square.displayHeight / 2;
+		   
+  const verticalDiff = playerBottom - squareTop;
+
+  // Si le joueur touche par le haut (avec une petite marge de tolérance)
+  if (verticalDiff < 10 && player.body.velocity.y > 0) {
+    // Le joueur a sauté sur le carré rouge
+	this.sound.play('kill', { volume: 0.5 })
+    player.setVelocityY(-200);
+    this.tweens.add({
+      targets: square,
+      scaleX: 0,
+      scaleY: 0,
+      duration: 300,
+      ease: 'Cubic.easeIn',
+      onComplete: () => {
+        square.destroy();
+      }
+    });
+    } else {
+    // Collision par côté ou par dessous : mort
+	this.sound.play('dead', { volume: 0.5 })
+    this.scene.restart();
+  }
+  }, null, this);
+ // --- BOUTONS DANS LE CANVAS ---
+createMobileControls(this);
+
+    }
+
+
+
+update() {
+    const p = this.player;
+
+    // Déplacement horizontal
+    if (this.cursors.left.isDown || this.movingLeft) p.setVelocityX(-160);
+    else if (this.cursors.right.isDown || this.movingRight) p.setVelocityX(160);
+    else p.setVelocityX(0);
+
+    // Reset compteur saut
+    if (p.body.touching.down) this.jumpCount = 0;
+
+    // Saut via clavier
+    if (Phaser.Input.Keyboard.JustDown(this.cursors.up)) this.jumpPlayer();
+}
+
+// --- fonction saut + double saut ---
+jumpPlayer() {
+    if (this.jumpCount < 2) {
+        this.player.setVelocityY(-330);
+
+        if (this.jumpCount === 1) {
+            let dir = this.cursors.left.isDown ? -1 : (this.cursors.right.isDown ? 1 : 1);
+            this.tweens.add({ targets: this.player, angle: this.player.angle + 180 * dir, duration: 500, ease: "Cubic.easeOut" });
+        }
+		this.sound.play('jump', { volume: 0.5 })
+        this.jumpCount++;
+    }
+}
+}
+/* =========================================================
                     CONFIG JEU
 ========================================================= */
 const config = {
@@ -1658,32 +1846,10 @@ const config = {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH
    },
-  scene: [LoadingScene, MenuScene, Level1, Level2, Level3, Level4, Level5, ShopScene, ShopScene2, Level6, World1]
+  scene: [LoadingScene, MenuScene, Level1, Level2, Level3, Level4, Level5, ShopScene, ShopScene2, Level6, World1, Level7]
 };
 
 const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
