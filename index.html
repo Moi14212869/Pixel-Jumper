@@ -253,7 +253,7 @@ class LoadingScene extends Phaser.Scene {
             percentText.setText(parseInt(value * 100) + "%");
         });
 		this.load.audio('bgm', 'asset/8bit-music-for-game-68698.mp3');
-
+		this.load.audio('jump', 'asset/jump_c_02-102843.mp3');
         // Quand le chargement est complet
         this.load.on('complete', () => {
             progressBar.destroy();
@@ -427,7 +427,7 @@ jumpPlayer() {
             let dir = this.cursors.left.isDown ? -1 : (this.cursors.right.isDown ? 1 : 1);
             this.tweens.add({ targets: this.player, angle: this.player.angle + 180 * dir, duration: 500, ease: "Cubic.easeOut" });
         }
-
+		this.sound.play('jump', { volume: 0.5 })
         this.jumpCount++;
     }
 }
@@ -563,7 +563,7 @@ jumpPlayer() {
             let dir = this.cursors.left.isDown ? -1 : (this.cursors.right.isDown ? 1 : 1);
             this.tweens.add({ targets: this.player, angle: this.player.angle + 180 * dir, duration: 500, ease: "Cubic.easeOut" });
         }
-
+		this.sound.play('jump', { volume: 0.5 })
         this.jumpCount++;
     }
 }
@@ -806,7 +806,7 @@ jumpPlayer() {
             let dir = this.cursors.left.isDown ? -1 : (this.cursors.right.isDown ? 1 : 1);
             this.tweens.add({ targets: this.player, angle: this.player.angle + 180 * dir, duration: 500, ease: "Cubic.easeOut" });
         }
-
+		this.sound.play('jump', { volume: 0.5 })
         this.jumpCount++;
     }
 }
@@ -955,7 +955,7 @@ jumpPlayer() {
             let dir = this.cursors.left.isDown ? -1 : (this.cursors.right.isDown ? 1 : 1);
             this.tweens.add({ targets: this.player, angle: this.player.angle + 180 * dir, duration: 500, ease: "Cubic.easeOut" });
         }
-
+		this.sound.play('jump', { volume: 0.5 })
         this.jumpCount++;
     }
 }
@@ -1413,7 +1413,7 @@ jumpPlayer() {
             let dir = this.cursors.left.isDown ? -1 : (this.cursors.right.isDown ? 1 : 1);
             this.tweens.add({ targets: this.player, angle: this.player.angle + 180 * dir, duration: 500, ease: "Cubic.easeOut" });
         }
-
+		this.sound.play('jump', { volume: 0.5 })
         this.jumpCount++;
     }
 }
@@ -1504,6 +1504,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
