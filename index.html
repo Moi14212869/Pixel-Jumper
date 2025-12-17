@@ -514,8 +514,11 @@ this.jumpCount = 0;
         this.blueCircle = createBlueCircle(this, 740, 420);
 
         this.physics.add.collider(this.player, this.platforms);
-        this.physics.add.collider(this.player, this.spikes, () => this.scene.restart());
-   this.physics.add.overlap(this.player, this.blueCircle, () => {
+        this.physics.add.collider(this.player, this.spikes, () => {
+			this.sound.play('dead', { volume: 0.5 })
+			this.scene.restart();
+		})
+	this.physics.add.overlap(this.player, this.blueCircle, () => {
 	this.sound.play('victory', { volume: 0.5 })
     if (this.transitioning) return;
     this.transitioning = true;
@@ -613,6 +616,7 @@ function createRedCircle(scene, x, y, riseAmount = 100, direction = 'up') {
   return circle;
 }
 function onPlayerHitSpike(player, spike, scene) {
+	this.sound.play('dead', { volume: 0.5 })
   scene.scene.restart();
 }
 function createRedSquare(x, y, scene, distance = 100, direction = 'right') {
@@ -756,7 +760,10 @@ this.jumpCount = 0;
     // Collisions
     this.physics.add.collider(this.player, this.platforms);
     this.physics.add.collider(this.player, this.spikes, (p, s) => onPlayerHitSpike(p, s, this));
-    this.physics.add.overlap(this.player, this.redCircles, () => this.scene.restart());
+    this.physics.add.overlap(this.player, this.redCircles, () => {
+		this.sound.play('dead', { volume: 0.5 })
+		this.scene.restart();
+	})
   this.physics.add.overlap(this.player, this.blueCircle, () => {
 	this.sound.play('victory', { volume: 0.5 })
     if (this.transitioning) return;
@@ -905,7 +912,10 @@ this.jumpCount = 0;
     // Collisions
     this.physics.add.collider(this.player, this.platforms);
     this.physics.add.collider(this.player, this.spikes, (p,s) => onPlayerHitSpike(p,s,this));
-    this.physics.add.overlap(this.player, this.redCircles, () => this.scene.restart());
+    this.physics.add.overlap(this.player, this.redCircles, () => {
+		this.sound.play('dead', { volume: 0.5 })
+		this.scene.restart();
+	})
  this.physics.add.overlap(this.player, this.blueCircle, () => {
 	this.sound.play('victory', { volume: 0.5 })
     if (this.transitioning) return;
@@ -1059,7 +1069,10 @@ this.player.setCollideWorldBounds(true);
     // Collisions
     this.physics.add.collider(this.player, this.platforms);
     this.physics.add.collider(this.player, this.spikes, (p,s) => onPlayerHitSpike(p,s,this));
-    this.physics.add.overlap(this.player, this.redCircles, () => this.scene.restart());
+    this.physics.add.overlap(this.player, this.redCircles, () => {
+		this.sound.play('dead', { volume: 0.5 })
+		this.scene.restart();
+	})
  	this.physics.add.overlap(this.player, this.blueCircle, () => {
 	this.sound.play('victory', { volume: 0.5 })
     if (this.transitioning) return;
@@ -1340,7 +1353,10 @@ this.redCircles.add(createRedCircle(this, 580, 70, 60));
     // Collisions
     this.physics.add.collider(this.player, this.platforms);
     this.physics.add.collider(this.player, this.spikes, (p,s) => onPlayerHitSpike(p,s,this));
-    this.physics.add.overlap(this.player, this.redCircles, () => this.scene.restart());
+    this.physics.add.overlap(this.player, this.redCircles, () => {
+		this.sound.play('dead', { volume: 0.5 })
+		this.scene.restart();
+	})
  	this.physics.add.overlap(this.player, this.blueCircle, () => {
 	this.sound.play('victory', { volume: 0.5 })
     if (this.transitioning) return;
@@ -1389,6 +1405,7 @@ this.redCircles.add(createRedCircle(this, 580, 70, 60));
     });
     } else {
     // Collision par côté ou par dessous : mort
+	this.sound.play('dead', { volume: 0.5 })
     this.scene.restart();
   }
   }, null, this);
@@ -1514,6 +1531,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
