@@ -257,6 +257,7 @@ class LoadingScene extends Phaser.Scene {
 		this.load.audio('dead', 'asset/game-over-arcade-6435.mp3');
 		this.load.audio('victory', 'asset/level-up-enhancement-8-bit-retro-sound-effect-153002.mp3');
 		this.load.audio('menu', 'asset/menu.mp3');
+		this.load.audio('select', 'asset/select.mp3');
         // Quand le chargement est complet
         this.load.on('complete', () => {
             progressBar.destroy();
@@ -308,8 +309,10 @@ class MenuScene extends Phaser.Scene {
                 color: "#ffffffff"
             }).setOrigin(0.5).setInteractive();
 
-            btn.on("pointerdown", () => this.scene.start(niv.scene));
-
+            btn.on("pointerdown", () => {
+				this.sound.play('select', { volume: 0.5 })
+				this.scene.start(niv.scene);
+			})
             yPos += 60; // écart vertical entre boutons
         });
     }
@@ -1206,7 +1209,10 @@ class ShopScene extends Phaser.Scene {
                 });
                 selectText.setInteractive();
 
-                selectText.on("pointerdown", () => this.selectSkin(hexKey));
+                selectText.on("pointerdown", () => {
+					this.sound.play('select', { volume: 0.5 })
+					this.selectSkin(hexKey);
+				})
             }
 
             startY += 90;
@@ -1305,7 +1311,10 @@ class ShopScene2 extends Phaser.Scene {
                 });
                 selectText.setInteractive();
 
-                selectText.on("pointerdown", () => this.selectSkin(hexKey));
+                selectText.on("pointerdown", () => {
+					this.sound.play('select', { volume: 0.5 })
+					this.selectSkin(hexKey);
+				})
             }
 
             startY += 90;
@@ -1609,8 +1618,10 @@ class World1 extends Phaser.Scene {
                 color: "#ffffffff"
             }).setOrigin(0.5).setInteractive();
 
-            btn.on("pointerdown", () => this.scene.start(niv.scene));
-
+            btn.on("pointerdown", () => {
+				this.sound.play('select', { volume: 0.5 })
+				this.scene.start(niv.scene);
+			})
             yPos1 += 60; // écart vertical entre boutons
         });
 		        const niveaux2 = [
@@ -1651,6 +1662,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
