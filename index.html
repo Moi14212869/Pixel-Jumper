@@ -252,7 +252,7 @@ class LoadingScene extends Phaser.Scene {
             progressBar.fillRect(width / 2 - 150, height / 2 + 5, 300 * value, 20);
             percentText.setText(parseInt(value * 100) + "%");
         });
-		this.load.audio('bgm', 'assets/8bit-music-for-game-68698.mp3');
+		this.load.audio('bgm', 'asset/8bit-music-for-game-68698.mp3');
 
         // Quand le chargement est complet
         this.load.on('complete', () => {
@@ -1504,6 +1504,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
