@@ -1660,21 +1660,7 @@ class Level7 extends Phaser.Scene {
 	this.input.addPointer(2);
 this.cursors = this.input.keyboard.createCursorKeys();
 this.jumpCount = 0;
-
-		//bouton
-		const backButton = this.add.text(5, 5, "←", {
-            fontSize: "24px",
-            color: "#ffffff",
-            backgroundColor: "#00BFFF",
-            padding: { x: 7, y: 4 },
-            borderRadius: 5
-        }).setInteractive();
-
-        backButton.on("pointerdown", () => {
-			this.sound.play('menu', { volume: 0.5 })
-            this.scene.start("World1");
-        });
-
+	  
     // Plateformes
   createPlatform(this, 0, 560, 800, 40); //sol
   createPlatform(this, 120, 480, 120, 80);
@@ -1729,7 +1715,19 @@ this.player.setCollideWorldBounds(true);
   this.redCircles.add(createRedCircle(this, 500, 450, -100));
   this.redCircles.add(createRedCircle(this, 540, 550, 100));
 
+		//bouton
+		const backButton = this.add.text(5, 5, "←", {
+            fontSize: "24px",
+            color: "#ffffff",
+            backgroundColor: "#00BFFF",
+            padding: { x: 7, y: 4 },
+            borderRadius: 5
+        }).setInteractive();
 
+        backButton.on("pointerdown", () => {
+			this.sound.play('menu', { volume: 0.5 })
+            this.scene.start("World1");
+        });
 //carrés rouges
   this.redSquares = this.physics.add.group();
   this.physics.add.collider(this.redSquares, this.platforms);
@@ -1853,5 +1851,6 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
