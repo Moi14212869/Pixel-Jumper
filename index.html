@@ -301,16 +301,19 @@ class MenuScene extends Phaser.Scene {
     		fontSize: "28px",
     		color: "#ffff00"
 		}).setOrigin(1, 0); // aligné à droite
-		const settingsBtn = this.add.text(400, 360, "⚙ Paramètres", {
-    fontSize: "30px",
-    color: "#ffffff"
-	}).setOrigin(0.5).setInteractive();
+		
+const setting = this.add.text(5, 5, "⚙", {
+            fontSize: "24px",
+            color: "#ffffff",
+            backgroundColor: "#00BFFF",
+            padding: { x: 7, y: 4 },
+            borderRadius: 5
+        }).setInteractive();
 
-settingsBtn.on("pointerdown", () => {
-    this.sound.play('select', { volume: gameVolume });
-    this.scene.start("SettingsScene");
-});
-
+        setting.on("pointerdown", () => {
+			this.sound.play('menu', { volume: gameVolume })
+            this.scene.start("SettingsScene");
+        });
         const niveaux = [
             { nom: "Shop 🛒", scene: "ShopScene" },
             { nom: "➡ Play !!", scene: "World1" },
@@ -324,7 +327,7 @@ settingsBtn.on("pointerdown", () => {
             }).setOrigin(0.5).setInteractive();
 
             btn.on("pointerdown", () => {
-				this.sound.play('select', { volume: 0.5 })
+				this.sound.play('select', { volume: gameVolume })
 				this.scene.start(niv.scene);
 			})
             yPos += 60; // écart vertical entre boutons
@@ -360,7 +363,7 @@ this.jumpCount = 0;
         }).setInteractive();
 
         backButton.on("pointerdown", () => {
-			this.sound.play('menu', { volume: 0.5 })
+			this.sound.play('menu', { volume: gameVolume })
             this.scene.start("World1");
         });
 		
@@ -392,12 +395,12 @@ this.jumpCount = 0;
         // collisions
         this.physics.add.collider(this.player, this.platforms);
         this.physics.add.collider(this.player, this.spikes, () => {
-			this.sound.play('dead', { volume: 0.5 })
+			this.sound.play('dead', { volume: gameVolume })
 			this.scene.restart();
 		})
         // sortie vers niveau 2
   this.physics.add.overlap(this.player, this.blueCircle, () => {
-	this.sound.play('victory', { volume: 0.5 })
+	this.sound.play('victory', { volume: gameVolume })
     if (this.transitioning) return;
     this.transitioning = true;
 
@@ -451,7 +454,7 @@ jumpPlayer() {
             let dir = this.cursors.left.isDown ? -1 : (this.cursors.right.isDown ? 1 : 1);
             this.tweens.add({ targets: this.player, angle: this.player.angle + 180 * dir, duration: 500, ease: "Cubic.easeOut" });
         }
-		this.sound.play('jump', { volume: 0.5 })
+		this.sound.play('jump', { volume: gameVolume })
         this.jumpCount++;
     }
 }
@@ -502,7 +505,7 @@ this.jumpCount = 0;
         }).setInteractive();
 
         backButton.on("pointerdown", () => {
-			this.sound.play('menu', { volume: 0.5 })
+			this.sound.play('menu', { volume: gameVolume })
             this.scene.start("World1");
         });
         // joueur
@@ -535,11 +538,11 @@ this.jumpCount = 0;
 
         this.physics.add.collider(this.player, this.platforms);
         this.physics.add.collider(this.player, this.spikes, () => {
-			this.sound.play('dead', { volume: 0.5 })
+			this.sound.play('dead', { volume: gameVolume })
 			this.scene.restart();
 		})
 	this.physics.add.overlap(this.player, this.blueCircle, () => {
-	this.sound.play('victory', { volume: 0.5 })
+	this.sound.play('victory', { volume: gameVolume })
     if (this.transitioning) return;
     this.transitioning = true;
 
@@ -592,7 +595,7 @@ jumpPlayer() {
             let dir = this.cursors.left.isDown ? -1 : (this.cursors.right.isDown ? 1 : 1);
             this.tweens.add({ targets: this.player, angle: this.player.angle + 180 * dir, duration: 500, ease: "Cubic.easeOut" });
         }
-		this.sound.play('jump', { volume: 0.5 })
+		this.sound.play('jump', { volume: gameVolume })
         this.jumpCount++;
     }
 }
@@ -636,7 +639,7 @@ function createRedCircle(scene, x, y, riseAmount = 100, direction = 'up') {
   return circle;
 }
 function onPlayerHitSpike(player, spike, scene) {
-	scene.sound.play('dead', { volume: 0.5 })
+	scene.sound.play('dead', { volume: gameVolume })
   scene.scene.restart();
 }
 function createRedSquare(x, y, scene, distance = 100, direction = 'right') {
@@ -724,7 +727,7 @@ this.jumpCount = 0;
         }).setInteractive();
 
         backButton.on("pointerdown", () => {
-			this.sound.play('menu', { volume: 0.5 })
+			this.sound.play('menu', { volume: gameVolume })
             this.scene.start("World1");
         });
     // Joueur
@@ -782,11 +785,11 @@ this.jumpCount = 0;
     this.physics.add.collider(this.player, this.platforms);
     this.physics.add.collider(this.player, this.spikes, (p, s) => onPlayerHitSpike(p, s, this));
     this.physics.add.overlap(this.player, this.redCircles, () => {
-		this.sound.play('dead', { volume: 0.5 })
+		this.sound.play('dead', { volume: gameVolume })
 		this.scene.restart();
 	})
   this.physics.add.overlap(this.player, this.blueCircle, () => {
-	this.sound.play('victory', { volume: 0.5 })
+	this.sound.play('victory', { volume: gameVolume })
     if (this.transitioning) return;
     this.transitioning = true;
 
@@ -841,7 +844,7 @@ jumpPlayer() {
             let dir = this.cursors.left.isDown ? -1 : (this.cursors.right.isDown ? 1 : 1);
             this.tweens.add({ targets: this.player, angle: this.player.angle + 180 * dir, duration: 500, ease: "Cubic.easeOut" });
         }
-		this.sound.play('jump', { volume: 0.5 })
+		this.sound.play('jump', { volume: gameVolume })
         this.jumpCount++;
     }
 }
@@ -889,7 +892,7 @@ this.jumpCount = 0;
         }).setInteractive();
 
         backButton.on("pointerdown", () => {
-			this.sound.play('menu', { volume: 0.5 })
+			this.sound.play('menu', { volume: gameVolume })
             this.scene.start("World1");
         });
 
@@ -935,11 +938,11 @@ this.jumpCount = 0;
     this.physics.add.collider(this.player, this.platforms);
     this.physics.add.collider(this.player, this.spikes, (p,s) => onPlayerHitSpike(p,s,this));
     this.physics.add.overlap(this.player, this.redCircles, () => {
-		this.sound.play('dead', { volume: 0.5 })
+		this.sound.play('dead', { volume: gameVolume })
 		this.scene.restart();
 	})
  this.physics.add.overlap(this.player, this.blueCircle, () => {
-	this.sound.play('victory', { volume: 0.5 })
+	this.sound.play('victory', { volume: gameVolume })
     if (this.transitioning) return;
     this.transitioning = true;
 
@@ -995,7 +998,7 @@ jumpPlayer() {
             let dir = this.cursors.left.isDown ? -1 : (this.cursors.right.isDown ? 1 : 1);
             this.tweens.add({ targets: this.player, angle: this.player.angle + 180 * dir, duration: 500, ease: "Cubic.easeOut" });
         }
-		this.sound.play('jump', { volume: 0.5 })
+		this.sound.play('jump', { volume: gameVolume })
         this.jumpCount++;
     }
 }
@@ -1027,7 +1030,7 @@ this.jumpCount = 0;
         }).setInteractive();
 
         backButton.on("pointerdown", () => {
-			this.sound.play('menu', { volume: 0.5 })
+			this.sound.play('menu', { volume: gameVolume })
             this.scene.start("World1");
         });
 
@@ -1093,11 +1096,11 @@ this.player.setCollideWorldBounds(true);
     this.physics.add.collider(this.player, this.platforms);
     this.physics.add.collider(this.player, this.spikes, (p,s) => onPlayerHitSpike(p,s,this));
     this.physics.add.overlap(this.player, this.redCircles, () => {
-		this.sound.play('dead', { volume: 0.5 })
+		this.sound.play('dead', { volume: gameVolume })
 		this.scene.restart();
 	})
  	this.physics.add.overlap(this.player, this.blueCircle, () => {
-	this.sound.play('victory', { volume: 0.5 })
+	this.sound.play('victory', { volume: gameVolume })
     if (this.transitioning) return;
     this.transitioning = true;
 
@@ -1153,7 +1156,7 @@ jumpPlayer() {
             let dir = this.cursors.left.isDown ? -1 : (this.cursors.right.isDown ? 1 : 1);
             this.tweens.add({ targets: this.player, angle: this.player.angle + 180 * dir, duration: 500, ease: "Cubic.easeOut" });
         }
-
+		this.sound.play('jump', { volume: gameVolume })
         this.jumpCount++;
     }
 }
@@ -1214,7 +1217,7 @@ class ShopScene extends Phaser.Scene {
                 buyText.setInteractive();
 
                 buyText.on("pointerdown", () => {
-					this.sound.play('buy', { volume: 0.5 })
+					this.sound.play('buy', { volume: gameVolume })
 					this.buySkin(hexKey, item.price);
 				})
             }
@@ -1227,7 +1230,7 @@ class ShopScene extends Phaser.Scene {
                 selectText.setInteractive();
 
                 selectText.on("pointerdown", () => {
-					this.sound.play('select', { volume: 0.5 })
+					this.sound.play('select', { volume: gameVolume })
 					this.selectSkin(hexKey);
 				})
             }
@@ -1244,7 +1247,7 @@ class ShopScene extends Phaser.Scene {
         });
         back.setInteractive();
         back.on("pointerdown", () => {
-			this.sound.play('menu', { volume: 0.5 })
+			this.sound.play('menu', { volume: gameVolume })
             this.scene.start("MenuScene");
         });
 		const next = this.add.text(700, 280, "▶", {
@@ -1256,7 +1259,7 @@ class ShopScene extends Phaser.Scene {
         });
         next.setInteractive();
         next.on("pointerdown", () => {
-			this.sound.play('menu', { volume: 0.5 })
+			this.sound.play('menu', { volume: gameVolume })
             this.scene.start("ShopScene2");
         });
     }
@@ -1320,7 +1323,7 @@ class ShopScene2 extends Phaser.Scene {
                 buyText.setInteractive();
 
                 buyText.on("pointerdown", () => {
-					this.sound.play('buy', { volume: 0.5 })
+					this.sound.play('buy', { volume: gameVolume })
 					this.buySkin(hexKey, item.price);
 				})
             }
@@ -1333,7 +1336,7 @@ class ShopScene2 extends Phaser.Scene {
                 selectText.setInteractive();
 
                 selectText.on("pointerdown", () => {
-					this.sound.play('select', { volume: 0.5 })
+					this.sound.play('select', { volume: gameVolume })
 					this.selectSkin(hexKey);
 				})
             }
@@ -1350,7 +1353,7 @@ class ShopScene2 extends Phaser.Scene {
         });
         back.setInteractive();
         back.on("pointerdown", () => {
-			this.sound.play('menu', { volume: 0.5 })
+			this.sound.play('menu', { volume: gameVolume })
             this.scene.start("MenuScene");
         });
 		const prec = this.add.text(10, 280, "◀", {
@@ -1362,7 +1365,7 @@ class ShopScene2 extends Phaser.Scene {
         });
         prec.setInteractive();
         prec.on("pointerdown", () => {
-			this.sound.play('menu', { volume: 0.5 })
+			this.sound.play('menu', { volume: gameVolume })
             this.scene.start("ShopScene");
         });
     }
@@ -1414,7 +1417,7 @@ this.jumpCount = 0;
         }).setInteractive();
 
         backButton.on("pointerdown", () => {
-			this.sound.play('menu', { volume: 0.5 })
+			this.sound.play('menu', { volume: gameVolume })
             this.scene.start("World1");
         });
 
@@ -1503,11 +1506,11 @@ this.redCircles.add(createRedCircle(this, 580, 70, 60));
     this.physics.add.collider(this.player, this.platforms);
     this.physics.add.collider(this.player, this.spikes, (p,s) => onPlayerHitSpike(p,s,this));
     this.physics.add.overlap(this.player, this.redCircles, () => {
-		this.sound.play('dead', { volume: 0.5 })
+		this.sound.play('dead', { volume: gameVolume })
 		this.scene.restart();
 	})
  	this.physics.add.overlap(this.player, this.blueCircle, () => {
-	this.sound.play('victory', { volume: 0.5 })
+	this.sound.play('victory', { volume: gameVolume })
     if (this.transitioning) return;
     this.transitioning = true;
 
@@ -1541,7 +1544,7 @@ this.redCircles.add(createRedCircle(this, 580, 70, 60));
   // Si le joueur touche par le haut (avec une petite marge de tolérance)
   if (verticalDiff < 10 && player.body.velocity.y > 0) {
     // Le joueur a sauté sur le carré rouge
-	this.sound.play('kill', { volume: 0.5 })
+	this.sound.play('kill', { volume: gameVolume })
     player.setVelocityY(-200);
     this.tweens.add({
       targets: square,
@@ -1555,7 +1558,7 @@ this.redCircles.add(createRedCircle(this, 580, 70, 60));
     });
     } else {
     // Collision par côté ou par dessous : mort
-	this.sound.play('dead', { volume: 0.5 })
+	this.sound.play('dead', { volume: gameVolume })
     this.scene.restart();
   }
   }, null, this);
@@ -1590,7 +1593,7 @@ jumpPlayer() {
             let dir = this.cursors.left.isDown ? -1 : (this.cursors.right.isDown ? 1 : 1);
             this.tweens.add({ targets: this.player, angle: this.player.angle + 180 * dir, duration: 500, ease: "Cubic.easeOut" });
         }
-		this.sound.play('jump', { volume: 0.5 })
+		this.sound.play('jump', { volume: gameVolume })
         this.jumpCount++;
     }
 }
@@ -1623,7 +1626,7 @@ class World1 extends Phaser.Scene {
         }).setInteractive();
 
         MenuButton.on("pointerdown", () => {
-			this.sound.play('menu', { volume: 0.5 })
+			this.sound.play('menu', { volume: gameVolume })
             this.scene.start("MenuScene");
         });
         const niveaux1 = [
@@ -1641,7 +1644,7 @@ class World1 extends Phaser.Scene {
             }).setOrigin(0.5).setInteractive();
 
             btn.on("pointerdown", () => {
-				this.sound.play('select', { volume: 0.5 })
+				this.sound.play('select', { volume: gameVolume })
 				this.scene.start(niv.scene);
 			})
             yPos1 += 60; // écart vertical entre boutons
@@ -1659,7 +1662,10 @@ class World1 extends Phaser.Scene {
                 color: "#ffffffff"
             }).setOrigin(0.5).setInteractive();
 
-            btn.on("pointerdown", () => this.scene.start(niv.scene));
+            btn.on("pointerdown", () => {
+				this.sound.play('select', { volume: gameVolume })
+				this.scene.start(niv.scene);
+			})
 
             yPos2 += 60; // écart vertical entre boutons
         });
@@ -1744,7 +1750,7 @@ this.player.setCollideWorldBounds(true);
         }).setInteractive();
 
         backButton.on("pointerdown", () => {
-			this.sound.play('menu', { volume: 0.5 })
+			this.sound.play('menu', { volume: gameVolume })
             this.scene.start("World1");
         });
 //carrés rouges
@@ -1758,11 +1764,11 @@ this.player.setCollideWorldBounds(true);
     this.physics.add.collider(this.player, this.platforms);
     this.physics.add.collider(this.player, this.spikes, (p,s) => onPlayerHitSpike(p,s,this));
     this.physics.add.overlap(this.player, this.redCircles, () => {
-		this.sound.play('dead', { volume: 0.5 })
+		this.sound.play('dead', { volume: gameVolume })
 		this.scene.restart();
 	})
  	this.physics.add.overlap(this.player, this.blueCircle, () => {
-	this.sound.play('victory', { volume: 0.5 })
+	this.sound.play('victory', { volume: gameVolume })
     if (this.transitioning) return;
     this.transitioning = true;
 
@@ -1796,7 +1802,7 @@ this.player.setCollideWorldBounds(true);
   // Si le joueur touche par le haut (avec une petite marge de tolérance)
   if (verticalDiff < 10 && player.body.velocity.y > 0) {
     // Le joueur a sauté sur le carré rouge
-	this.sound.play('kill', { volume: 0.5 })
+	this.sound.play('kill', { volume: gameVolume })
     player.setVelocityY(-200);
     this.tweens.add({
       targets: square,
@@ -1810,7 +1816,7 @@ this.player.setCollideWorldBounds(true);
     });
     } else {
     // Collision par côté ou par dessous : mort
-	this.sound.play('dead', { volume: 0.5 })
+	this.sound.play('dead', { volume: gameVolume })
     this.scene.restart();
   }
   }, null, this);
@@ -1845,7 +1851,7 @@ jumpPlayer() {
             let dir = this.cursors.left.isDown ? -1 : (this.cursors.right.isDown ? 1 : 1);
             this.tweens.add({ targets: this.player, angle: this.player.angle + 180 * dir, duration: 500, ease: "Cubic.easeOut" });
         }
-		this.sound.play('jump', { volume: 0.5 })
+		this.sound.play('jump', { volume: gameVolume })
         this.jumpCount++;
     }
 }
@@ -1931,6 +1937,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
