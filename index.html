@@ -259,6 +259,7 @@ class LoadingScene extends Phaser.Scene {
 		this.load.audio('menu', 'asset/menu.mp3');
 		this.load.audio('select', 'asset/select.mp3');
 		this.load.audio('kill', 'asset/kill.mp3');
+		this.load.audio('buy', 'asset/buy.mp3');
         // Quand le chargement est complet
         this.load.on('complete', () => {
             progressBar.destroy();
@@ -1197,14 +1198,17 @@ class ShopScene extends Phaser.Scene {
             this.add.text(140, startY - 20, item.label, { fontSize: "24px", fill: "#ffffff" });
 
             if (!bought && item.price > 0) {
-                const buyText = this.add.text(350, startY - 20, "Acheter " + item.price + " ⬡", { fontSize: "22px", fill: "#00FFFF" });
+                const buyText = this.add.text(350, startY - 20, "Buy " + item.price + " ⬡", { fontSize: "22px", fill: "#00FFFF" });
                 buyText.setInteractive();
 
-                buyText.on("pointerdown", () => this.buySkin(hexKey, item.price));
+                buyText.on("pointerdown", () => {
+					this.sound.play('buy', { volume: 0.5 })
+					this.buySkin(hexKey, item.price);
+				})
             }
 
             if (bought || item.price === 0) {
-                const selectText = this.add.text(350, startY - 20, isSelected ? "Sélectionné" : "Sélectionner", {
+                const selectText = this.add.text(350, startY - 20, isSelected ? "selected" : "select", {
                     fontSize: "22px",
                     fill: isSelected ? "#00FF66" : "#FFFFFF"
                 });
@@ -1300,14 +1304,17 @@ class ShopScene2 extends Phaser.Scene {
             this.add.text(140, startY - 20, item.label, { fontSize: "24px", fill: "#ffffff" });
 
             if (!bought && item.price > 0) {
-                const buyText = this.add.text(350, startY - 20, "Acheter " + item.price + " ⬡", { fontSize: "22px", fill: "#00FFFF" });
+                const buyText = this.add.text(350, startY - 20, "Buy " + item.price + " ⬡", { fontSize: "22px", fill: "#00FFFF" });
                 buyText.setInteractive();
 
-                buyText.on("pointerdown", () => this.buySkin(hexKey, item.price));
+                buyText.on("pointerdown", () => {
+					this.sound.play('buy', { volume: 0.5 })
+					this.buySkin(hexKey, item.price);
+				})
             }
 
             if (bought || item.price === 0) {
-                const selectText = this.add.text(350, startY - 20, isSelected ? "Sélectionné" : "Sélectionner", {
+                const selectText = this.add.text(350, startY - 20, isSelected ? "selected" : "select", {
                     fontSize: "22px",
                     fill: isSelected ? "#00FF66" : "#FFFFFF"
                 });
@@ -1851,6 +1858,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
