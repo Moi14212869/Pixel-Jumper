@@ -438,8 +438,8 @@ const level = this.cache.json.get(this.levelKey);
 
     // --- PLATEFORMES ---
     level.platforms.forEach(p =>
-	  const color = typeof p.color === "string" ? parseInt(p.color) : (p.color || 0xA0522D);
-      createPlatform(this, p.x, p.y, p.w, p.h || 40, p.color || 0xA0522D)
+	  let color = typeof p.color === "string" ? parseInt(p.color) : (p.color || 0xA0522D);
+      createPlatform(this, p.x, p.y, p.w, p.h || 40, color || 0xA0522D)
     );
 
     // --- PIQUES ---
@@ -988,6 +988,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
