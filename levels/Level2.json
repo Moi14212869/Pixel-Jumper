@@ -33,6 +33,6 @@
   ],
 
   "blueCircle": { "x": 740, "y": 420 },
-    "reward": 3,
+    "reward": 5,
   "nextScene": "World1"
 }
