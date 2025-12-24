@@ -531,24 +531,53 @@ const level = this.cache.json.get(this.levelKey);
     this.scene.restart({ levelKey: this.levelKey });
   }
 
-  update() {
+update() {
     const p = this.player;
 
-    if (this.cursors.left.isDown || this.movingLeft) p.setVelocityX(-160);
-    else if (this.cursors.right.isDown || this.movingRight) p.setVelocityX(160);
-    else p.setVelocityX(0);
-
-    if (p.body.touching.down) this.jumpCount = 0;
-    if (Phaser.Input.Keyboard.JustDown(this.cursors.up)) this.jumpPlayer();
-  }
-
-  jumpPlayer() {
-    if (this.jumpCount < 2) {
-      this.player.setVelocityY(-330);
-      this.sound.play("jump", { volume: gameVolume });
-      this.jumpCount++;
+    // --- Déplacement horizontal ---
+    if (this.cursors.left.isDown || this.movingLeft) {
+        p.setVelocityX(-160);
+    } else if (this.cursors.right.isDown || this.movingRight) {
+        p.setVelocityX(160);
+    } else {
+        p.setVelocityX(0);
     }
-  }
+
+    // --- Reset compteur de saut si le joueur touche le sol ---
+    if (p.body.touching.down) {
+        this.jumpCount = 0;
+    }
+
+    // --- Saut via clavier ---
+    if (Phaser.Input.Keyboard.JustDown(this.cursors.up)) {
+        this.jumpPlayer();
+    }
+}
+
+// --- Fonction saut + double saut ---
+jumpPlayer() {
+    if (this.jumpCount < 2) {
+        // Appliquer la vélocité verticale pour le saut
+        this.player.setVelocityY(-330);
+
+        // Si c'est le deuxième saut, ajouter une rotation
+        if (this.jumpCount === 1) {
+            const dir = this.cursors.left.isDown ? -1 : (this.cursors.right.isDown ? 1 : 1);
+
+            this.tweens.add({
+                targets: this.player,
+                angle: this.player.angle + 180 * dir,
+                duration: 500,
+                ease: "Cubic.easeOut"
+            });
+        }
+
+        // Jouer le son du saut
+        this.sound.play('jump', { volume: gameVolume });
+
+        // Incrémenter le compteur de saut
+        this.jumpCount++;
+    }
 }
 
 /* =====================================================
@@ -941,6 +970,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
