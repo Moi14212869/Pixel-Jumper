@@ -1,6 +1,10 @@
 {
   "playerStart": { "x": 100, "y": 450 },
 
+  "blueCircle": { "x": 40, "y": 120 },
+  "reward": 5,
+  "nextScene": "World1",
+
   "platforms": [
     { "x": 0, "y": 560, "w": 800 },
     { "x": 400, "y": 400, "w": 120 },
@@ -10,10 +14,8 @@
   ],
 
   "spikes": [
-    { "x": 380, "y": 560 },
-    { "x": 420, "y": 560 },
-    { "x": 280, "y": 250 }
-  ],
-
-  "blueCircle": { "x": 40, "y": 120 }
+    { "x": 380, "y": 560, "orientation": "up" },
+    { "x": 420, "y": 560, "orientation": "up" },
+    { "x": 280, "y": 250, "orientation": "up" }
+  ]
 }
