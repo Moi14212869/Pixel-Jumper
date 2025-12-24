@@ -418,12 +418,14 @@ class LevelScene extends Phaser.Scene {
     this.levelKey = data.levelKey; // ex: "world1_level1"
   }
 
-  preload() {
-    this.load.json("levelData", `levels/${this.levelKey}.json`);
-  }
+preload() {
+  this.load.json(this.levelKey, `levels/${this.levelKey}.json`);
+}
+
 
   create() {
-    const level = this.cache.json.get("levelData");
+const level = this.cache.json.get(this.levelKey);
+
 
     this.transitioning = false;
     this.platforms = this.physics.add.staticGroup();
@@ -915,4 +917,5 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
