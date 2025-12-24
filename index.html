@@ -486,19 +486,43 @@ const level = this.cache.json.get(this.levelKey);
     this.physics.add.collider(this.player, this.platforms);
     this.physics.add.collider(this.player, this.spikes, () => this.die());
     this.physics.add.overlap(this.player, this.redCircles, () => this.die());
+	this.physics.add.overlap(this.player, this.blueCircle, () => {
+    // Jouer le son de victoire
+    this.sound.play('victory', { volume: gameVolume });
 
-    this.physics.add.overlap(this.player, this.blueCircle, () => {
-      if (this.transitioning) return;
-      this.transitioning = true;
+    // Vérifier si une transition est déjà en cours
+    if (this.transitioning) return;
+    this.transitioning = true;
 
-      this.sound.play("victory", { volume: gameVolume });
-      playerCoins += level.reward || 0;
-      localStorage.setItem("playerCoins", playerCoins);
+    // Désactiver le mouvement du joueur
+    this.player.body.enable = false;
 
-      showInterstitial();
-      this.scene.start(level.nextScene);
+    // Définir la position cible pour l'animation
+    const targetX = this.blueCircle.x;
+    const targetY = this.blueCircle.y;
+
+    // Ajouter l'animation de transition du joueur
+    this.tweens.add({
+        targets: this.player,
+        x: targetX,
+        y: targetY,
+        scale: 0.3,
+        angle: 720,
+        duration: 800,
+        ease: 'Cubic.easeInOut',
+        onComplete: () => {
+
+
+            // Ajouter des pièces au joueur
+            playerCoins += level.reward || 0;
+            localStorage.setItem("playerCoins", playerCoins);
+            // Afficher une publicité interstitielle
+            showInterstitial();
+            // Changer de scène
+            this.scene.start(level.nextScene);
+        }
     });
-
+}, null, this);
     createMobileControls(this);
   }
 
@@ -917,5 +941,6 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
