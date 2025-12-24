@@ -314,7 +314,8 @@ const setting = this.add.text(5, 5, "⚙", {
         });
         const niveaux = [
             { nom: "Shop 🛒", scene: "ShopScene" },
-            { nom: "➡ Play !!", scene: "World1" },
+			{ nom: "Credits", scene: "CreditsScene" },
+            { nom: "➡ Play !!", scene: "World1" }
         ];
 
         let yPos = 260;
@@ -967,6 +968,59 @@ class SettingsScene extends Phaser.Scene {
     })
 }
 }
+/* =========================================================
+                     Crédits
+========================================================= */
+class CreditsScene extends Phaser.Scene {
+    constructor() {
+        super("CreditsScene");
+    }
+
+    create() {
+        const { width, height } = this.scale;
+
+        // Titre
+        this.add.text(width / 2, 80, "Credits", {
+            fontSize: "50px",
+            color: "#ffffff"
+        }).setOrigin(0.5);
+
+        // Contenu des crédits
+        const credits = [
+            "A game by MOI14212869",
+            "",
+            "Development: [Ton Nom / Pseudo]",
+            "Visual Design: [Nom de ta sœur]",
+            "Level Design: [Nom de ta cousine], [Nom de ton pote]",
+            "QA / Testing: [Nom de ton pote]",
+            "",
+            "Thanks for playing!"
+        ];
+
+        let startY = 160;
+        credits.forEach(line => {
+            this.add.text(width / 2, startY, line, {
+                fontSize: "28px",
+                color: "#ffffff"
+            }).setOrigin(0.5);
+            startY += 50;
+        });
+
+        // Bouton retour
+        const backButton = this.add.text(5, 5, "← Back", {
+            fontSize: "24px",
+            color: "#ffffff",
+            backgroundColor: "#00BFFF",
+            padding: { x: 7, y: 4 },
+            borderRadius: 5
+        }).setInteractive();
+
+        backButton.on("pointerdown", () => {
+            this.sound.play('menu', { volume: gameVolume });
+            this.scene.start("MenuScene");
+        });
+    }
+}
 
 /* =========================================================
                     CONFIG JEU
@@ -981,13 +1035,14 @@ const config = {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH
    },
-  scene: [LoadingScene, MenuScene,  LevelScene, ShopScene, ShopScene2, World1, SettingsScene]
+  scene: [LoadingScene, MenuScene,  LevelScene, ShopScene, ShopScene2, World1, SettingsScene, CreditsScene]
 };
 
 const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
