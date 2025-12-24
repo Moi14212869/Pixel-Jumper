@@ -978,15 +978,10 @@ class CreditsScene extends Phaser.Scene {
 
     create() {
         const { width, height } = this.scale;
-
-        // Titre
-        this.add.text(width / 2, 50, "Credits", {
-            fontSize: "50px",
-            color: "#ffffff"
-        }).setOrigin(0.5);
-
         // Contenu des crédits
         const credits = [
+			"Credits",
+			"",
             "A game by",
             "MOI14212869",
             "",
@@ -1063,6 +1058,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
