@@ -25,5 +25,7 @@
     { "x": 400, "y": 250, "direction": "down" }
   ],
 
-  "blueCircle": { "x": 740, "y": 80 }
+  "blueCircle": { "x": 740, "y": 80 },
+    "reward": 8,
+  "nextScene": "World1"
 }
