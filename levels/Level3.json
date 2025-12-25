@@ -37,7 +37,17 @@
     { "x": 660, "y": 360 },
     { "x": 620, "y": 360 },
     { "x": 100, "y": 360 },
-    { "x": 140, "y": 360 }
+    { "x": 140, "y": 360 },
+    { "x": 0, "y": 300, "orientation": "right" },
+    { "x": 0, "y": 260, "orientation": "right" },
+    { "x": 0, "y": 220, "orientation": "right" },
+    { "x": 0, "y": 180, "orientation": "right" },
+    { "x": 60, "y": 80, "orientation": "down" },
+    { "x": 100, "y": 40, "orientation": "down" },
+    { "x": 140, "y": 40, "orientation": "down" },
+    { "x": 180, "y": 40, "orientation": "down" },
+    { "x": 800, "y": 60, "orientation": "left" },
+    { "x": 800, "y": 100, "orientation": "left" }
   ],
 
   "redCircles": [
@@ -45,6 +55,7 @@
     { "x": 240, "y": 550 },
     { "x": 280, "y": 550 },
     { "x": 480, "y": 350 },
-    { "x": 400, "y": 250, "direction": "down" }
+    { "x": 400, "y": 250, "direction": "down" },
+    { "x": 320, "y": 350 }
   ]
 }
