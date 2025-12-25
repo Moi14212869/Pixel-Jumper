@@ -29,14 +29,6 @@ if (isNaN(gameVolume)) gameVolume = 0.5;
 let playerCoins = parseInt(localStorage.getItem("playerCoins")) || 0;
 let pokiReady = false;
 let colorPlayer = parseInt(localStorage.getItem("colorPlayer")) || 0xAA66CC;
-window.PokiSDK && PokiSDK.init && PokiSDK.init().then(() => {
-    pokiReady = true;
-});
-function showInterstitial() {
-    if (pokiReady && PokiSDK.ads.isAdReady()) {
-        PokiSDK.ads.showAd();
-    }
-}
 function createPlatform(scene, x, y, widthInPx, heightInPx = 40, color = 0xA0522D) {
     const tileSize = 40;
     const blocksPerRow = Math.floor(widthInPx / tileSize);
@@ -535,8 +527,6 @@ backButton.on("pointerdown", () => {
             // Ajouter des pièces au joueur
             playerCoins += level.reward || 0;
             localStorage.setItem("playerCoins", playerCoins);
-            // Afficher une publicité interstitielle
-            showInterstitial();
             // Changer de scène
             this.scene.start(level.nextScene);
         }
@@ -1087,6 +1077,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
