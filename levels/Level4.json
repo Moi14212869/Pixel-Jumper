@@ -27,7 +27,7 @@
 
   "redCircles": [
     { "x": 460, "y": 150 },
-    { "x": 380, "y": 50, "rise": 100, "direction": "down" },
+    { "x": 380, "y": 50, "direction": "down" },
     { "x": 300, "y": 150 }
   ]
 }
