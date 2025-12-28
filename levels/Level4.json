@@ -1,6 +1,6 @@
 {
-  "playerStart": { "x": 100, "y": 460 },
-  "blueCircle": { "x": 740, "y": 80 },
+  "playerStart": { "x": 60, "y": 370 },
+  "blueCircle": { "x": 100, "y": 100 },
     "reward": 10,
   "nextScene": "World1",
   "platforms": [
