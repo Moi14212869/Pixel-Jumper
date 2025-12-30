@@ -47,8 +47,9 @@
     { "x": 680, "y": 220, "orientation": "left" },
     { "x": 680, "y": 180, "orientation": "left" },
     { "x": 740, "y": 60, "orientation": "down" },
-    { "x": 780, "y": 20, "orientation": "down" }
-    
+    { "x": 780, "y": 20, "orientation": "down" },
+    { "x": 720, "y": 20, "orientation": "left" },
+    { "x": 720, "y": 60, "orientation": "left" }
   ],
 
   "redCircles": [
