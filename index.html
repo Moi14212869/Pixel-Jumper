@@ -53,18 +53,19 @@ function createPlatform(scene, x, y, widthInPx, heightInPx = 40, color = 0xA0522
     }
 }
 function createSnow(scene) {
-    // Texture flocon (petit cercle blanc)
+    // Texture flocon
     const gfx = scene.add.graphics();
     gfx.fillStyle(0xffffff, 1);
     gfx.fillCircle(2, 2, 2);
     gfx.generateTexture("snowflake", 4, 4);
     gfx.destroy();
 
-    const particles = scene.add.particles("snowflake");
+    const particles = scene.add.particles(0, 0, "snowflake");
 
-    particles.setDepth(-10); // bien en arrière-plan
+    particles.setDepth(-10);
+    particles.setScrollFactor(0);
 
-    particles.createEmitter({
+    particles.addEmitter({
         x: { min: 0, max: scene.scale.width },
         y: -10,
         lifespan: 6000,
@@ -75,11 +76,7 @@ function createSnow(scene) {
         frequency: 100,
         blendMode: "NORMAL"
     });
-
-    // La neige ne bouge pas avec la caméra
-    particles.setScrollFactor(0);
 }
-
 function createBlueCircle(scene, x, y) {
     const radius = 20;
     const gfx = scene.add.graphics();
@@ -1278,6 +1275,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
