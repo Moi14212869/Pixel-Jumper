@@ -306,6 +306,7 @@ const setting = this.add.text(5, 5, "⚙", {
         });
         const niveaux = [
             { nom: "Shop 🛒", scene: "ShopScene" },
+			{ nom: "Statistics", scene: "Stats" },
 			{ nom: "➡ Play !!", scene: "World1" },
 			{ nom: "Credits", scene: "CreditsScene" }
         ];
@@ -1068,7 +1069,29 @@ class CreditsScene extends Phaser.Scene {
         }
     }
 }
+/* ========================================================
+                    Stats
+========================================================= */
+class Stats extends Phaser.Scene {
+    constructor() {
+        super("Stats");
+    }
 
+    create() {
+		const backButton = this.add.text(5, 5, "←", {
+            fontSize: "24px",
+            color: "#ffffff",
+            backgroundColor: "#00BFFF",
+            padding: { x: 7, y: 4 },
+            borderRadius: 5
+        }).setInteractive();
+
+        backButton.on("pointerdown", () => {
+			this.sound.play('menu', { volume: gameVolume })
+            this.scene.start("World1");
+    })
+	}
+}
 /* =========================================================
                     CONFIG JEU
 ========================================================= */
@@ -1082,13 +1105,14 @@ const config = {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH
    },
-  scene: [LoadingScene, MenuScene,  LevelScene, ShopScene, ShopScene2, World1, SettingsScene, CreditsScene]
+  scene: [LoadingScene, MenuScene,  LevelScene, ShopScene, ShopScene2, World1, SettingsScene, CreditsScene, Stats]
 };
 
 const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
