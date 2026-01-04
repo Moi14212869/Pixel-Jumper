@@ -1083,20 +1083,57 @@ class Stats extends Phaser.Scene {
     }
 
     create() {
-		const backButton = this.add.text(5, 5, "←", {
+        const { width, height } = this.scale;
+
+        // Fond
+        this.add.rectangle(width / 2, height / 2, width, height, 0x3d2505);
+
+        // Titre
+        this.add.text(width / 2, 60, "STATISTICS", {
+            fontSize: "40px",
+            color: "#ffffff",
+            fontStyle: "bold"
+        }).setOrigin(0.5);
+
+        // Récupération des stats
+        const coins = parseInt(localStorage.getItem("playerCoins")) || 0;
+        const deaths = parseInt(localStorage.getItem("dead")) || 0;
+        const kills = parseInt(localStorage.getItem("kill")) || 0;
+        const parties = parseInt(localStorage.getItem("party")) || 0;
+
+        // Affichage
+        const statsData = [
+            { label: "Coins 💰", value: coins },
+            { label: "Deaths ☠️", value: deaths },
+            { label: "Kills 🔪", value: kills },
+            { label: "Parties Played 🎮", value: parties }
+        ];
+
+        let startY = 150;
+        statsData.forEach(stat => {
+            this.add.text(width / 2, startY, `${stat.label} : ${stat.value}`, {
+                fontSize: "28px",
+                color: "#ffff00"
+            }).setOrigin(0.5);
+            startY += 60;
+        });
+
+        // Bouton retour
+        const backButton = this.add.text(10, 10, "← Back", {
             fontSize: "24px",
             color: "#ffffff",
             backgroundColor: "#00BFFF",
-            padding: { x: 7, y: 4 },
+            padding: { x: 10, y: 5 },
             borderRadius: 5
         }).setInteractive();
 
         backButton.on("pointerdown", () => {
-			this.sound.play('menu', { volume: gameVolume })
+            this.sound.play('menu', { volume: gameVolume });
             this.scene.start("MenuScene");
-    })
-	}
+        });
+    }
 }
+
 /* =========================================================
                     CONFIG JEU
 ========================================================= */
@@ -1117,6 +1154,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
