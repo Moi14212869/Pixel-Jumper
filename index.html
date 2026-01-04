@@ -1070,7 +1070,7 @@ class CreditsScene extends Phaser.Scene {
     }
 }
 /* ========================================================
-                    Stats
+                           Stats
 ========================================================= */
 class Stats extends Phaser.Scene {
     constructor() {
@@ -1088,7 +1088,7 @@ class Stats extends Phaser.Scene {
 
         backButton.on("pointerdown", () => {
 			this.sound.play('menu', { volume: gameVolume })
-            this.scene.start("World1");
+            this.scene.start("MenuScene");
     })
 	}
 }
@@ -1112,6 +1112,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
