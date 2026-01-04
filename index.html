@@ -358,12 +358,6 @@ function createRedCircle(scene, x, y, riseAmount = 100, direction = 'up') {
 
   return circle;
 }
-function onPlayerHitSpike(player, spike, scene) {
-	dead++;
-	localStorage.setItem("dead", dead);
-	scene.sound.play('dead', { volume: gameVolume })
-  scene.scene.restart();
-}
 function createRedSquare(x, y, scene, distance = 100, direction = 'right') {
   const size = 40;
 
@@ -392,7 +386,6 @@ function createRedSquare(x, y, scene, distance = 100, direction = 'right') {
   } else {
     console.warn('Direction inconnue pour redSquare :', direction);
   }
-
   scene.tweens.add({
     targets: square,
     x: targetX,
@@ -526,6 +519,7 @@ backButton.on("pointerdown", () => {
     // Le joueur a sauté sur le carré rouge
 	kill++;
 	localStorage.setItem("kill", kill);
+	this.sound.play("kill", { volume: gameVolume });
     player.setVelocityY(-200);
     this.tweens.add({
       targets: square,
@@ -538,7 +532,9 @@ backButton.on("pointerdown", () => {
       }
     });
     } else {
-    // Collision par côté ou par dessous : mort
+	  dead++;
+	localStorage.setItem("dead", dead);
+    this.sound.play("dead", { volume: gameVolume });
     this.scene.restart();
   }
   }, null, this);
@@ -584,6 +580,8 @@ backButton.on("pointerdown", () => {
 
   die() {
     this.sound.play("dead", { volume: gameVolume });
+	dead++;
+	localStorage.setItem("dead", dead);
     this.scene.restart({ levelKey: this.levelKey });
   }
 
@@ -1119,5 +1117,6 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
