@@ -674,8 +674,7 @@ update() {
 	this.onIce = false;
 
 // Détection glace
-const onIce = p.body.touching.down && 
-	const onIce = this.onIce && p.body.touching.down;
+const onIce = p.body.touching.down && this.onIce;
 
 // --- GLISSADE ---
 if (onIce) {
@@ -1373,6 +1372,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
