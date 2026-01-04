@@ -36,13 +36,24 @@ function createPlatform(scene, x, y, widthInPx, heightInPx = 40, color = 0xA0522
     const blocksPerRow = Math.floor(widthInPx / tileSize);
     const blocksPerCol = Math.floor(heightInPx / tileSize);
 
+    const isWorld2 = scene.isWorld2 === true;
+
     for (let row = 0; row < blocksPerCol; row++) {
         for (let col = 0; col < blocksPerRow; col++) {
+
             const gfx = scene.add.graphics();
+
+            // Bloc principal
             gfx.fillStyle(color, 1);
             gfx.fillRect(0, 0, tileSize, tileSize);
 
-            const key = `block-${x + col * tileSize}-${y + row * tileSize}`;
+            // ❄️ Neige sur le dessus (uniquement World2 et première rangée)
+            if (isWorld2 && row === 0) {
+                gfx.fillStyle(0xffffff, 1);
+                gfx.fillRect(0, 0, tileSize, 8); // épaisseur de neige
+            }
+
+            const key = `block-${x + col * tileSize}-${y + row * tileSize}-${isWorld2 ? "snow" : "normal"}`;
             gfx.generateTexture(key, tileSize, tileSize);
             gfx.destroy();
 
@@ -52,6 +63,7 @@ function createPlatform(scene, x, y, widthInPx, heightInPx = 40, color = 0xA0522
         }
     }
 }
+
 function createSnow(scene) {
     // Texture flocon
     if (!scene.textures.exists("snowflake")) {
@@ -444,7 +456,7 @@ if (level.nextScene === "World2") {
     createSnow(this);
 }
 
-
+	this.isWorld2 = (level.nextScene === "World2");
     this.transitioning = false;
     this.platforms = this.physics.add.staticGroup();
     this.spikes = this.physics.add.staticGroup();
@@ -1276,6 +1288,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
