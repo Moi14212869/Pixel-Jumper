@@ -896,6 +896,19 @@ class World1 extends Phaser.Scene {
 			this.sound.play('menu', { volume: gameVolume })
             this.scene.start("MenuScene");
         });
+		const next = this.add.text(700, 280, "▶", {
+           fontSize: "24px",
+            color: "#ffffff",
+            backgroundColor: "#00BFFF",
+            padding: { x: 7, y: 4 },
+            borderRadius: 5
+        });
+        next.setInteractive();
+        next.on("pointerdown", () => {
+			this.sound.play('menu', { volume: gameVolume })
+            this.scene.start("World2");
+        });
+    }
         const niveaux1 = [
             { nom: "➡ Level 1", scene: "Level1" },
             { nom: "➡ Level 2", scene: "Level2" },
@@ -1131,9 +1144,93 @@ class Stats extends Phaser.Scene {
             this.sound.play('menu', { volume: gameVolume });
             this.scene.start("MenuScene");
         });
+	}
+}
+/* ========================================================
+                           World 2
+========================================================= */
+class World2 extends Phaser.Scene {
+    constructor() {
+        super("World2");
+    }
+
+    create() {
+		
+        const title = this.add.text(400, 80, "World 1", {
+            fontSize: "50px",
+            color: "#ffffffff"
+        }).setOrigin(0.5);
+		this.coinText = this.add.text(780, 20, `💰 ${playerCoins}`, {
+    		fontSize: "28px",
+    		color: "#ffff00"
+		}).setOrigin(1, 0); // aligné à droite
+		const MenuButton = this.add.text(5, 5, "←", {
+            fontSize: "24px",
+            color: "#ffffff",
+            backgroundColor: "#00BFFF",
+            padding: { x: 7, y: 4 },
+            borderRadius: 5
+        }).setInteractive();
+
+        MenuButton.on("pointerdown", () => {
+			this.sound.play('menu', { volume: gameVolume })
+            this.scene.start("MenuScene");
+        });
+		
+        const niveaux3 = [
+            { nom: "➡ Level 9", scene: "Level9" }
+        ];
+
+        let yPos1 = 260;
+        niveaux3.forEach(niv => {
+            const btn = this.add.text(200, yPos1, niv.nom, {
+                fontSize: "34px",
+                color: "#ffffffff"
+            }).setOrigin(0.5).setInteractive();
+
+            btn.on("pointerdown", () => {
+				this.sound.play('select', { volume: gameVolume })
+				this.scene.start("LevelScene", {
+  					levelKey: niv.scene
+				});
+			})
+            yPos1 += 60; // écart vertical entre boutons
+        });
+		        const niveaux4 = [
+        ];
+
+        let yPos2 = 260;
+        niveaux4.forEach(niv => {
+            const btn = this.add.text(550, yPos2, niv.nom, {
+                fontSize: "34px",
+                color: "#ffffffff"
+            }).setOrigin(0.5).setInteractive();
+
+            btn.on("pointerdown", () => {
+				this.sound.play('select', { volume: gameVolume })
+				this.scene.start("LevelScene", {
+  					levelKey: niv.scene
+				});
+			})
+
+            yPos2 += 60; // écart vertical entre boutons
+        });
     }
 }
-
+		const prec = this.add.text(10, 280, "◀", {
+           fontSize: "24px",
+            color: "#ffffff",
+            backgroundColor: "#00BFFF",
+            padding: { x: 7, y: 4 },
+            borderRadius: 5
+        });
+        prec.setInteractive();
+        prec.on("pointerdown", () => {
+			this.sound.play('menu', { volume: gameVolume })
+            this.scene.start("ShopScene");
+        });
+    }
+}
 /* =========================================================
                     CONFIG JEU
 ========================================================= */
@@ -1147,13 +1244,14 @@ const config = {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH
    },
-  scene: [LoadingScene, MenuScene,  LevelScene, ShopScene, ShopScene2, World1, SettingsScene, CreditsScene, Stats]
+  scene: [LoadingScene, MenuScene,  LevelScene, ShopScene, ShopScene2, World1, SettingsScene, CreditsScene, Stats, World2]
 };
 
 const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
