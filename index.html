@@ -447,7 +447,7 @@ const level = this.cache.json.get(this.levelKey);
           this,
           c.x,
           c.y,
-          c.rise || 100,
+          c.rise,
           c.direction || "up"
         ))
       );
@@ -1077,6 +1077,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
