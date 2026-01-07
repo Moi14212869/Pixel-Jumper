@@ -31,6 +31,16 @@ let dead = parseInt(localStorage.getItem("dead")) || 0;
 let kill = parseInt(localStorage.getItem("kill")) || 0;
 let party = parseInt(localStorage.getItem("party")) || 0;
 let colorPlayer = parseInt(localStorage.getItem("colorPlayer")) || 0xAA66CC;
+
+function checkObjectives() {
+    // Déblocage des skins existants
+    if (dead >= 1000) localStorage.setItem("skin_000000", "1");   // Noir après 1000 morts
+    if (kill >= 500) localStorage.setItem("skin_FF0000", "1");   // Rouge après 500 kills
+    // Nouveau : skin spécial après beaucoup de parties jouées
+    if (party >= 1000) localStorage.setItem("skin_A0522D", "1");
+}
+
+			
 function createPlatform(scene, x, y, widthInPx, heightInPx = 40, color = 0xA0522D) {
     const tileSize = 40;
     const blocksPerRow = Math.floor(widthInPx / tileSize);
@@ -432,6 +442,7 @@ const setting = this.add.text(5, 5, "⚙", {
         });
         const niveaux = [
             { nom: "Shop 🛒", scene: "ShopScene" },
+			{ nom: "🏆 Objectifs", scene: "ObjectivesScene" },
 			{ nom: "Statistics", scene: "Stats" },
 			{ nom: "➡ Play !!", scene: "World1" },
 			{ nom: "Credits", scene: "CreditsScene" }
@@ -658,6 +669,7 @@ backButton.on("pointerdown", () => {
     // Le joueur a sauté sur le carré rouge
 	kill++;
 	localStorage.setItem("kill", kill);
+	checkObjectives()
 	this.sound.play("kill", { volume: gameVolume });
     player.setVelocityY(-200);
     this.tweens.add({
@@ -673,6 +685,7 @@ backButton.on("pointerdown", () => {
     } else {
 	  dead++;
 	localStorage.setItem("dead", dead);
+	checkObjectives()
     this.sound.play("dead", { volume: gameVolume });
     this.scene.restart();
   }
@@ -683,6 +696,7 @@ backButton.on("pointerdown", () => {
     this.sound.play('victory', { volume: gameVolume });
 	party++;
 	localStorage.setItem("party", party);
+	checkObjectives()
     // Vérifier si une transition est déjà en cours
     if (this.transitioning) return;
     this.transitioning = true;
@@ -721,6 +735,7 @@ backButton.on("pointerdown", () => {
     this.sound.play("dead", { volume: gameVolume });
 	dead++;
 	localStorage.setItem("dead", dead);
+	checkObjectives()
     this.scene.restart({ levelKey: this.levelKey });
   }
 
@@ -1384,6 +1399,110 @@ class World2 extends Phaser.Scene {
         });
     }
 }
+/*===============================================================
+						Objectifs
+================================================================*/
+class ObjectivesScene extends Phaser.Scene {
+    constructor() {
+        super("ObjectivesScene");
+    }
+
+    create() {
+        checkObjectives();
+
+        const { width } = this.scale;
+
+        this.add.text(width / 2, 60, "OBJECTIFS", {
+            fontSize: "40px",
+            color: "#ffffff"
+        }).setOrigin(0.5);
+
+        const deadCount = parseInt(localStorage.getItem("dead")) || 0;
+        const killCount = parseInt(localStorage.getItem("kill")) || 0;
+        const levelsDone = parseInt(localStorage.getItem("levelsDone")) || 0;
+const objectives = [
+    {
+        label: "☠️ Die 1000 times",
+        progress: deadCount,
+        goal: 1000,
+        skin: "000000",
+        color: 0x000000
+    },
+    {
+        label: "🔪 Make 500 kills",
+        progress: killCount,
+        goal: 500,
+        skin: "FF0000",
+        color: 0xFF0000
+    },
+    {
+        label: "🎮 Complete 1000 levels",
+        progress: levelsDone,
+        goal: 1000,
+        skin: "A0522D",
+        color: 0xA0522D
+    }
+];
+
+
+        let y = 150;
+
+        objectives.forEach(obj => {
+
+            const unlocked = localStorage.getItem("skin_" + obj.skin) === "1";
+            const percent = Math.min(obj.progress / obj.goal, 1);
+
+            // Texte objectif
+            this.add.text(100, y, obj.label, {
+                fontSize: "22px",
+                color: "#ffffff"
+            });
+
+            // Barre de progression
+            this.add.rectangle(100, y + 30, 300, 12, 0x444444).setOrigin(0);
+            this.add.rectangle(100, y + 30, 300 * percent, 12, unlocked ? 0x00FF66 : 0xFFD700).setOrigin(0);
+
+            // Progression
+            this.add.text(420, y + 20, `${obj.progress}/${obj.goal}`, {
+                fontSize: "18px",
+                color: "#ffffff"
+            });
+
+            // Skin preview
+            const skinBox = this.add.rectangle(600, y + 20, 40, 40, obj.color);
+
+            if (unlocked) {
+                const select = this.add.text(660, y + 10, "Select", {
+                    fontSize: "18px",
+                    backgroundColor: "#00BFFF",
+                    padding: { x: 10, y: 5 }
+                }).setInteractive();
+
+                select.on("pointerdown", () => {
+                    localStorage.setItem("colorPlayer", obj.color);
+                    colorPlayer = obj.color;
+                });
+            } else {
+                this.add.text(660, y + 10, "🔒", { fontSize: "22px" });
+            }
+
+            y += 100;
+        });
+
+        // Bouton retour
+        const back = this.add.text(10, 10, "←", {
+            fontSize: "24px",
+            backgroundColor: "#00BFFF",
+            padding: { x: 10, y: 5 }
+        }).setInteractive();
+
+        back.on("pointerdown", () => {
+            this.sound.play('menu', { volume: gameVolume });
+            this.scene.start("MenuScene");
+        });
+    }
+}
+
 /* =========================================================
                     CONFIG JEU
 ========================================================= */
@@ -1397,13 +1516,14 @@ const config = {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH
    },
-  scene: [LoadingScene, MenuScene,  LevelScene, ShopScene, ShopScene2, World1, SettingsScene, CreditsScene, Stats, World2]
+  scene: [LoadingScene, MenuScene,  LevelScene, ShopScene, ShopScene2, World1, SettingsScene, CreditsScene, Stats, World2, ObjectivesScene]
 };
 
 const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
