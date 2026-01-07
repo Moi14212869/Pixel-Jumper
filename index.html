@@ -1484,6 +1484,7 @@ const objectives = [
             this.sound.play('select', { volume: gameVolume });
             localStorage.setItem("colorPlayer", obj.color);
             colorPlayer = obj.color;
+			localStorage.setItem("colorPlayer", colorPlayer);
             // Mettre à jour le texte du bouton pour refléter la sélection
             select.setText("Selected");
             select.setColor("#00FF66");
@@ -1529,6 +1530,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
