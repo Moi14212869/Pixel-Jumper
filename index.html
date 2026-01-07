@@ -1419,7 +1419,7 @@ class ObjectivesScene extends Phaser.Scene {
 
         const deadCount = parseInt(localStorage.getItem("dead")) || 0;
         const killCount = parseInt(localStorage.getItem("kill")) || 0;
-        const levelsDone = parseInt(localStorage.getItem("levelsDone")) || 0;
+        const levelsDone = parseInt(localStorage.getItem("party")) || 0;
 const objectives = [
     {
         label: "☠️ Die 1000 times",
@@ -1523,6 +1523,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
