@@ -422,34 +422,37 @@ class MenuScene extends Phaser.Scene {
 
         // --- TITRE ---
         const title = this.add.text(width / 2, 120, "Jumpix", {
-            fontSize: "50px",
+            fontSize: "60px",
             color: "#ffffff",
-            fontStyle: "bold"
+            fontStyle: "bold",
+            stroke: "#000000",
+            strokeThickness: 6
         }).setOrigin(0.5);
 
         // Animation pulsation titre
         this.tweens.add({
             targets: title,
-            scale: { from: 1, to: 1.05 },
-            duration: 1000,
+            scale: { from: 1, to: 1.08 },
+            duration: 1200,
             yoyo: true,
             repeat: -1,
             ease: "Sine.easeInOut"
         });
 
         // --- COINS ---
-        this.coinText = this.add.text(width - 20, 20, `💰 ${playerCoins}`, {
+        this.coinText = this.add.text(width - 30, 20, `💰 ${playerCoins}`, {
             fontSize: "28px",
             color: "#ffff00",
-            fontStyle: "bold"
+            fontStyle: "bold",
+            stroke: "#000000",
+            strokeThickness: 4
         }).setOrigin(1, 0);
 
-        // Cercle derrière l’icône coins
-        const coinCircle = this.add.circle(width - 40, 40, 30, 0x222222, 0.6);
-        coinCircle.setDepth(-1); // derrière le texte
+        // Cercle derrière coins
+        this.add.circle(width - 50, 40, 30, 0x222222, 0.6).setDepth(-1);
 
-        // --- BOUTON SETTINGS ---
-        this.createMenuButton(30, 30, "⚙", () => {
+        // --- SETTINGS ---
+        this.createCircleButton(50, 50, "⚙", () => {
             this.sound.play('menu', { volume: gameVolume });
             this.scene.start("SettingsScene");
         });
@@ -457,77 +460,98 @@ class MenuScene extends Phaser.Scene {
         // --- BOUTONS PRINCIPAUX ---
         const menuItems = [
             { label: "➡ Play !!", scene: "World1" },
-            { label: "Shop 🛒", scene: "ShopScene" },
+            { label: "🛒 Shop", scene: "ShopScene" },
             { label: "🏆 Objectives", scene: "ObjectivesScene" },
-            { label: "Statistics", scene: "Stats" },
-            { label: "Credits", scene: "CreditsScene" }
+            { label: "📊 Statistics", scene: "Stats" },
+            { label: "🎬 Credits", scene: "CreditsScene" }
         ];
 
         let startY = 260;
         menuItems.forEach((item, index) => {
-            // Création bouton avec rectangle de fond
-            const bg = this.add.rectangle(width / 2, startY, 300, 50, 0x00BFFF, 0.4).setOrigin(0.5).setInteractive();
-            const btnText = this.add.text(width / 2, startY, item.label, {
-                fontSize: "28px",
-                color: "#ffffff"
-            }).setOrigin(0.5).setInteractive();
+            this.createMenuButton(width / 2, startY, item.label, () => {
+                this.sound.play('select', { volume: gameVolume });
+                this.scene.start(item.scene);
+            }, index);
+            startY += 80;
+        });
 
-            // Tween d’apparition
-            this.tweens.add({
-                targets: [bg, btnText],
-                y: startY,
-                alpha: { from: 0, to: 1 },
-                duration: 600,
-                delay: index * 100,
-                ease: 'Back.easeOut'
+        // --- PARTICULES DE NEIGE ---
+        createSnow(this);
+    }
+
+    // Bouton rectangulaire principal
+    createMenuButton(x, y, label, callback, index = 0) {
+        const bg = this.add.rectangle(x, y + 50, 320, 60, 0x00BFFF, 0.5).setOrigin(0.5).setInteractive();
+        bg.setStrokeStyle(2, 0xffffff);
+        bg.setShadow(5, 5, "#000000", 4, true, true);
+
+        const text = this.add.text(x, y + 50, label, {
+            fontSize: "28px",
+            color: "#ffffff",
+            fontStyle: "bold"
+        }).setOrigin(0.5);
+
+        // Tween d'apparition avec slide + fade
+        this.tweens.add({
+            targets: [bg, text],
+            y: y,
+            alpha: { from: 0, to: 1 },
+            duration: 700,
+            delay: index * 100,
+            ease: "Back.easeOut"
+        });
+
+        // Hover effect
+        [bg, text].forEach(obj => {
+            obj.on("pointerover", () => {
+                bg.setFillStyle(0x00BFFF, 0.9);
+                text.setStyle({ color: "#00FFFF" });
+                this.tweens.add({
+                    targets: [bg, text],
+                    scale: 1.05,
+                    duration: 150,
+                    ease: "Power1"
+                });
             });
-
-            // Interactions
-            [bg, btnText].forEach(obj => {
-                obj.on("pointerover", () => {
-                    bg.setFillStyle(0x00BFFF, 0.8);
-                    btnText.setStyle({ color: "#00FFFF" });
-                    obj.setScale(1.05);
-                });
-                obj.on("pointerout", () => {
-                    bg.setFillStyle(0x00BFFF, 0.4);
-                    btnText.setStyle({ color: "#ffffff" });
-                    obj.setScale(1);
-                });
-                obj.on("pointerdown", () => {
-                    this.sound.play('select', { volume: gameVolume });
-                    this.scene.start(item.scene);
+            obj.on("pointerout", () => {
+                bg.setFillStyle(0x00BFFF, 0.5);
+                text.setStyle({ color: "#ffffff" });
+                this.tweens.add({
+                    targets: [bg, text],
+                    scale: 1,
+                    duration: 150,
+                    ease: "Power1"
                 });
             });
-
-            startY += 70;
+            obj.on("pointerdown", callback);
         });
     }
 
-    // Fonction utilitaire pour créer un petit bouton circulaire
-    createMenuButton(x, y, label, callback) {
-        const circle = this.add.circle(x, y, 25, 0x222222, 0.6).setInteractive();
+    // Bouton circulaire type Settings / retour
+    createCircleButton(x, y, label, callback) {
+        const circle = this.add.circle(x, y, 30, 0x222222, 0.7).setInteractive();
         const text = this.add.text(x, y, label, {
-            fontSize: "24px",
-            color: "#ffffff"
-        }).setOrigin(0.5).setInteractive();
+            fontSize: "28px",
+            color: "#ffffff",
+            fontStyle: "bold"
+        }).setOrigin(0.5);
 
-        // Hover effect
         [circle, text].forEach(obj => {
             obj.on("pointerover", () => {
-                circle.setFillStyle(0x222222, 0.9);
+                circle.setFillStyle(0x222222, 0.95);
                 text.setStyle({ color: "#00FFFF" });
-                obj.setScale(1.1);
+                this.tweens.add({ targets: [circle, text], scale: 1.1, duration: 120 });
             });
             obj.on("pointerout", () => {
-                circle.setFillStyle(0x222222, 0.6);
+                circle.setFillStyle(0x222222, 0.7);
                 text.setStyle({ color: "#ffffff" });
-                obj.setScale(1);
+                this.tweens.add({ targets: [circle, text], scale: 1, duration: 120 });
             });
             obj.on("pointerdown", callback);
         });
     }
 }
+
 
 function createRedCircle(scene, x, y, riseAmount = 100, direction = 'up') {
   const radius = 10;
@@ -1597,6 +1621,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
