@@ -1219,6 +1219,68 @@ class SettingsScene extends Phaser.Scene {
 
             this.sound.volume = gameVolume;
         });
+		// ===== Bouton RESET COMPTE =====
+const resetBtn = this.add.text(400, 320, "RESET ACCOUNT", {
+    fontSize: "24px",
+    color: "#ffffff",
+    backgroundColor: "#FF4444",
+    padding: { x: 20, y: 10 },
+    borderRadius: 8
+}).setOrigin(0.5).setInteractive();
+
+resetBtn.on("pointerdown", () => {
+    this.sound.play('menu', { volume: gameVolume });
+
+    // Confirmation
+    const overlay = this.add.rectangle(400, 300, 800, 600, 0x000000, 0.6);
+    const box = this.add.rectangle(400, 300, 360, 180, 0x222222)
+        .setStrokeStyle(3, 0xffffff);
+
+    const txt = this.add.text(400, 260,
+        "Reset all progress?\nThis cannot be undone!",
+        { fontSize: "20px", color: "#ffffff", align: "center" }
+    ).setOrigin(0.5);
+
+    const yes = this.add.text(340, 340, "YES", {
+        fontSize: "22px",
+        backgroundColor: "#FF4444",
+        padding: { x: 15, y: 8 }
+    }).setOrigin(0.5).setInteractive();
+
+    const no = this.add.text(460, 340, "NO", {
+        fontSize: "22px",
+        backgroundColor: "#00BFFF",
+        padding: { x: 15, y: 8 }
+    }).setOrigin(0.5).setInteractive();
+
+    no.on("pointerdown", () => {
+        overlay.destroy(); box.destroy(); txt.destroy(); yes.destroy(); no.destroy();
+    });
+
+    yes.on("pointerdown", () => {
+        // 🔥 RESET TOTAL
+        localStorage.clear();
+
+        // Valeurs par défaut
+        localStorage.setItem("gameVolume", 0.5);
+        localStorage.setItem("playerCoins", 0);
+        localStorage.setItem("dead", 0);
+        localStorage.setItem("kill", 0);
+        localStorage.setItem("party", 0);
+        localStorage.setItem("colorPlayer", 0xAA66CC);
+
+        // Variables runtime
+        gameVolume = 0.5;
+        playerCoins = 0;
+        dead = 0;
+        kill = 0;
+        party = 0;
+        colorPlayer = 0xAA66CC;
+
+        this.scene.start("MenuScene");
+    });
+});
+
 
         // Bouton retour
       		const backButton = this.add.text(5, 5, "←", {
@@ -1578,6 +1640,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
