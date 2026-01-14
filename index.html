@@ -492,7 +492,7 @@ class MenuScene extends Phaser.Scene {
             { label: "Credits", scene: "CreditsScene" }
         ];
 
-        let startY = 260;
+        let startY = 240;
         buttons.forEach((btn, i) => {
             createButton(this, width / 2, startY, 320, 60, btn.label, () => {
                 this.sound.play('select', { volume: gameVolume });
@@ -1578,6 +1578,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
