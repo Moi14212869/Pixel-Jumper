@@ -1281,6 +1281,79 @@ resetBtn.on("pointerdown", () => {
     });
 });
 
+// ===== Bouton DEV : +1000 COINS =====
+const devBtn = this.add.text(400, 380, "+1000 COINS (DEV)", {
+    fontSize: "22px",
+    color: "#ffffff",
+    backgroundColor: "#00AA00",
+    padding: { x: 18, y: 8 },
+    borderRadius: 8
+}).setOrigin(0.5).setInteractive();
+
+devBtn.on("pointerdown", () => {
+    this.sound.play('menu', { volume: gameVolume });
+
+    const DEV_PASSWORD = "DEV123"; // 🔑 CHANGE ICI
+
+    // Overlay
+    const overlay = this.add.rectangle(400, 300, 800, 600, 0x000000, 0.6);
+
+    const box = this.add.rectangle(400, 300, 380, 220, 0x222222)
+        .setStrokeStyle(3, 0xffffff);
+
+    const title = this.add.text(400, 250, "Enter DEV password", {
+        fontSize: "22px",
+        color: "#ffffff"
+    }).setOrigin(0.5);
+
+    // Champ texte (Phaser = input clavier)
+    let inputText = "";
+    const input = this.add.text(400, 295, "▯▯▯▯▯", {
+        fontSize: "26px",
+        color: "#00ffcc",
+        backgroundColor: "#000000",
+        padding: { x: 10, y: 5 }
+    }).setOrigin(0.5);
+
+    const info = this.add.text(400, 330, "", {
+        fontSize: "18px",
+        color: "#ff5555"
+    }).setOrigin(0.5);
+
+    const closePopup = () => {
+        overlay.destroy();
+        box.destroy();
+        title.destroy();
+        input.destroy();
+        info.destroy();
+        this.input.keyboard.removeAllListeners();
+    };
+
+    // Capture clavier
+    this.input.keyboard.on('keydown', (event) => {
+        if (event.key === "Backspace") {
+            inputText = inputText.slice(0, -1);
+        } else if (event.key === "Enter") {
+
+            if (inputText === DEV_PASSWORD) {
+                playerCoins += 1000;
+                localStorage.setItem("playerCoins", playerCoins);
+                this.sound.play('buy', { volume: gameVolume });
+                closePopup();
+                this.scene.restart();
+            } else {
+                info.setText("❌ Wrong password");
+                this.sound.play('dead', { volume: gameVolume });
+                inputText = "";
+            }
+
+        } else if (inputText.length < 10 && event.key.length === 1) {
+            inputText += event.key;
+        }
+
+        input.setText("•".repeat(inputText.length));
+    });
+});
 
         // Bouton retour
       		const backButton = this.add.text(5, 5, "←", {
@@ -1640,6 +1713,7 @@ const game = new Phaser.Game(config);
 		</script>
     </body>
 </html>
+
 
 
 
